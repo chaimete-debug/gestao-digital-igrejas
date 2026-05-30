@@ -7,3 +7,4 @@ window.APP_CONFIG = {
   ORG_NAME: 'Igreja Local',
   DEFAULT_PIN_ENABLED: false
 };
+ 
