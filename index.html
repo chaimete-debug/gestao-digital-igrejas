@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gestão Digital da Igreja</title>
   <meta name="theme-color" content="#0f766e" />
-  <link rel="stylesheet" href="styles.css?v=37" />
+  <link rel="stylesheet" href="styles.css?v=38" />
 </head>
 <body>
 
@@ -49,6 +49,7 @@
         <button class="nav-btn" data-view="visitantesView" data-area="MEMBROS">Visitantes</button>
         <button class="nav-btn" data-view="reportView" data-area="FINANCAS">Financeiro</button>
         <button class="nav-btn" data-view="dizimosView" data-area="FINANCAS">Dízimos</button>
+        <button class="nav-btn" data-view="contribuicoesView" data-area="FINANCAS">Contribuições</button>
         <button class="nav-btn" data-view="formView">Novo registo</button>
         <button class="nav-btn" data-view="approvalView">Aprovações</button>
         <button class="nav-btn" data-view="delegadosView" data-area="GERAL">Certificação Delegados</button>
@@ -287,6 +288,66 @@
         </div>
       </section>
 
+
+      <section id="contribuicoesView" class="view avante-page">
+        <header class="page-header avante-header">
+          <div>
+            <span class="eyebrow">Avante Evangelho 2026</span>
+            <h2>Gestão das contribuições das igrejas</h2>
+            <p>Cada igreja dispõe de duas contribuições. A segunda contribuição é desbloqueada individualmente para cada igreja que atingir a sua meta na primeira contribuição.</p>
+          </div>
+          <div class="report-actions">
+            <button id="refreshAvanteBtn" class="ghost-btn" type="button">Actualizar</button>
+            <a class="primary-btn" href="./contribuicoes.html?v=39" target="_blank" rel="noopener">Abrir tela pública</a>
+          </div>
+        </header>
+
+        <div class="avante-toolbar">
+          <label>Grupo
+            <select id="avanteGroupSelect"></select>
+          </label>
+          <label class="avante-auto-refresh"><input id="avanteAutoRefresh" type="checkbox" checked> Actualização automática</label>
+          <span id="avanteLastUpdate" class="muted"></span>
+        </div>
+
+        <div id="avanteKpis" class="avante-kpis"></div>
+
+        <div class="avante-layout">
+          <div class="legacy-table-card avante-table-card">
+            <div class="table-scroll">
+              <table class="legacy-table avante-table">
+                <thead><tr><th>Igreja</th><th>Meta individual</th><th>1.ª contribuição</th><th>2.ª contribuição</th><th>Total</th><th>Falta</th><th>Progresso</th></tr></thead>
+                <tbody id="avanteTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <aside class="legacy-card avante-entry-card" id="avanteEntryCard">
+            <h3>Registar contribuição</h3>
+            <p class="muted">Uma contribuição já registada na mesma tentativa pode ser corrigida pelo operador autorizado.</p>
+            <form id="avanteContributionForm">
+              <label>Grupo
+                <select id="avanteFormGroup" required></select>
+              </label>
+              <label>Igreja
+                <select id="avanteChurchSelect" required></select>
+              </label>
+              <label>Tentativa
+                <select id="avanteAttemptSelect" required>
+                  <option value="1">1.ª contribuição</option>
+                  <option value="2">2.ª contribuição</option>
+                </select>
+              </label>
+              <label>Valor contribuído (MT)
+                <input id="avanteAmount" type="number" min="0.01" step="0.01" required placeholder="0,00">
+              </label>
+              <div id="avanteRuleMessage" class="avante-rule-message"></div>
+              <button class="primary-btn" type="submit">Registar contribuição</button>
+            </form>
+          </aside>
+        </div>
+      </section>
+
       <section id="assembleiaView" class="view">
         <header class="page-header">
           <div>
@@ -295,11 +356,11 @@
             <p>Planeamento por fases, tarefas, prazos, data central da assembleia e resumo da certificação dos delegados.</p>
           </div>
           <div class="report-actions">
-            <a class="primary-btn" href="./assembleia.html?v=37" target="_blank" rel="noopener">Abrir em página própria</a>
+            <a class="primary-btn" href="./assembleia.html?v=38" target="_blank" rel="noopener">Abrir em página própria</a>
           </div>
         </header>
         <div class="assembly-frame-card">
-          <iframe src="./assembleia.html?v=37" title="Guia da Assembleia Distrital" class="assembly-frame"></iframe>
+          <iframe src="./assembleia.html?v=38" title="Guia da Assembleia Distrital" class="assembly-frame"></iframe>
         </div>
       </section>
 
@@ -336,7 +397,7 @@
       });
     }
   </script>
-  <script src="config.js?v=37"></script>
-  <script src="app.js?v=37"></script>
+  <script src="config.js?v=38"></script>
+  <script src="app.js?v=38"></script>
 </body>
 </html>
