@@ -4070,6 +4070,7 @@ function openView(viewId){
   if(viewId === 'dashboardView') loadStats();
   if(viewId === 'reportView') loadFinancialReport();
   if(viewId === 'delegadosView') loadDelegadosModule();
+  if(viewId === 'contribuicoesView') loadAvanteData();
   if(['overviewView','escalasView','cultosView','visitantesView','dizimosView'].includes(viewId)) loadAppData();
 }
 
@@ -5274,3 +5275,105 @@ if(SANDBOX_MODE){
 }else{
   setStatus('bad','Aguardando login','Introduza as credenciais para entrar no sistema');
 }
+
+
+// v39 — Avante Evangelho 2026: desbloqueio individual da 2.ª contribuição
+const AVANTE_SANDBOX_GROUPS = [
+  {id:'grupo_1',name:'Grupo 1',metaIndividual:76650,churches:['Matola cidade','B. Liberdade','B. Matola','Fomento','Infulene']},
+  {id:'grupo_2',name:'Grupo 2',metaIndividual:63000,churches:['Massinwane','Boquisso','Kongolote 1']},
+  {id:'grupo_3',name:'Grupo 3',metaIndividual:37800,churches:['Ndlavela','T3','Matola A','Km 15','Nkombe']},
+  {id:'grupo_4',name:'Grupo 4',metaIndividual:25200,churches:['Malhampsene','Tchumene','Djuba']},
+  {id:'grupo_5',name:'Grupo 5',metaIndividual:14700,churches:['Tsalala','Licuacuanine','Kongolote 2']},
+  {id:'grupo_6',name:'Grupo 6',metaIndividual:6825,churches:['Mussumbuluko','Makhelene','Mulotana','Muhalaze','Mulotana Bily','Xinyepfana']},
+  {id:'grupo_7',name:'Grupo 7',metaIndividual:5250,churches:['Vale de Infulene','Matola Gare','Intaka','Malhampsene 2','Matibyana','Ndlavela 1']},
+  {id:'grupo_8',name:'Grupo 8',metaIndividual:2625,churches:['Tenga','Macopene','Sabie','Txonissa','Ressano Garcia','Emmanuel Beluluana']},
+  {id:'honoraria',name:'Igreja Honorária',metaIndividual:112000,churches:['Igreja Honorária']}
+];
+let avanteState={groups:[],selectedGroup:'',timer:null};
+function avanteMoney(v){return new Intl.NumberFormat('pt-MZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(v||0))+' MT';}
+function avanteSandboxData(){
+  return {ok:true,groups:AVANTE_SANDBOX_GROUPS.map(g=>({id:g.id,name:g.name,metaIndividual:g.metaIndividual,metaGrupo:g.metaIndividual*g.churches.length,primeiraTotal:0,segundaTotal:0,total:0,igrejasSegundaAberta:0,churches:g.churches.map((n,i)=>({id:g.id+'_'+(i+1),name:n,meta:g.metaIndividual,primeira:0,segunda:0,total:0,segundaAberta:false}))}))};
+}
+async function loadAvanteData(){
+  const body=$('#avanteTableBody'); if(body) body.innerHTML='<tr><td colspan="7">A carregar contribuições...</td></tr>';
+  try{
+    let out;
+    if(SANDBOX_MODE) out=avanteSandboxData();
+    else{
+      const url=window.APP_CONFIG.APPS_SCRIPT_URL, token=getAuthToken();
+      const res=await fetch(url+'?'+new URLSearchParams({action:'avantedata',token}).toString(),{cache:'no-store'});
+      out=await res.json(); if(!out.ok) throw new Error(out.message||'Não foi possível carregar as contribuições.');
+    }
+    avanteState.groups=out.groups||[];
+    if(!avanteState.selectedGroup || !avanteState.groups.some(g=>g.id===avanteState.selectedGroup)) avanteState.selectedGroup=avanteState.groups[0]?.id||'';
+    renderAvanteModule();
+    const stamp=$('#avanteLastUpdate'); if(stamp) stamp.textContent='Actualizado às '+new Date().toLocaleTimeString('pt-MZ',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    setupAvanteTimer();
+  }catch(err){console.error(err); if(body) body.innerHTML='<tr><td colspan="7">'+escapeHtml(err.message)+'</td></tr>'; toast(err.message,'error');}
+}
+function renderAvanteModule(){
+  const group=avanteState.groups.find(g=>g.id===avanteState.selectedGroup)||avanteState.groups[0]; if(!group) return;
+  const selects=[$('#avanteGroupSelect'),$('#avanteFormGroup')].filter(Boolean);
+  selects.forEach(s=>{const old=s.value;s.innerHTML=avanteState.groups.map(g=>`<option value="${escapeHtml(g.id)}">${escapeHtml(g.name)}</option>`).join('');s.value=group.id;});
+  const pct=group.metaGrupo?Math.min(999,(group.total/group.metaGrupo)*100):0;
+  $('#avanteKpis').innerHTML=`
+    <div class="avante-kpi highlight"><span>Meta do grupo</span><strong>${avanteMoney(group.metaGrupo)}</strong></div>
+    <div class="avante-kpi"><span>1.ª contribuição</span><strong>${avanteMoney(group.primeiraTotal)}</strong></div>
+    <div class="avante-kpi"><span>2.ª contribuição</span><strong>${avanteMoney(group.segundaTotal)}</strong></div>
+    <div class="avante-kpi"><span>Total acumulado</span><strong>${avanteMoney(group.total)}</strong></div>
+    <div class="avante-kpi"><span>Progresso</span><strong>${pct.toFixed(1)}%</strong></div>`;
+  const rows=(group.churches||[]).map(c=>{
+    const falta=Math.max(0,Number(c.meta||0)-Number(c.total||0)); const cp=c.meta?Math.min(100,(c.total/c.meta)*100):0;
+    const status=c.total>=c.meta?'done':c.total>0?'pending':'zero'; const statusLabel=c.total>=c.meta?'Meta atingida':c.total>0?'Em curso':'Sem contribuição';
+    return `<tr><td><strong>${escapeHtml(c.name)}</strong></td><td class="avante-money">${avanteMoney(c.meta)}</td><td class="avante-money">${avanteMoney(c.primeira)}</td><td class="avante-money">${avanteMoney(c.segunda)}</td><td class="avante-money">${avanteMoney(c.total)}</td><td class="avante-money">${avanteMoney(falta)}</td><td><div class="avante-progress"><div class="avante-progress-bar"><i style="width:${cp}%"></i></div><small>${cp.toFixed(1)}%</small> <span class="avante-status ${status}">${statusLabel}</span></div></td></tr>`;
+  }).join('');
+  $('#avanteTableBody').innerHTML=rows+`<tr class="avante-total-row"><td>Total do grupo</td><td>${avanteMoney(group.metaGrupo)}</td><td>${avanteMoney(group.primeiraTotal)}</td><td>${avanteMoney(group.segundaTotal)}</td><td>${avanteMoney(group.total)}</td><td>${avanteMoney(Math.max(0,group.metaGrupo-group.total))}</td><td>${pct.toFixed(1)}%</td></tr>`;
+  const churchSel=$('#avanteChurchSelect'); if(churchSel){
+    const previous=churchSel.value;
+    churchSel.innerHTML=(group.churches||[]).map(c=>`<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`).join('');
+    if((group.churches||[]).some(c=>c.id===previous)) churchSel.value=previous;
+  }
+  updateAvanteAttemptRule();
+  const card=$('#avanteEntryCard'); if(card) card.classList.toggle('hidden',!userCanSubmitArea('FINANCAS'));
+}
+function updateAvanteAttemptRule(){
+  const group=avanteState.groups.find(g=>g.id===avanteState.selectedGroup)||avanteState.groups[0];
+  const churchId=$('#avanteChurchSelect')?.value;
+  const church=group&&(group.churches||[]).find(c=>c.id===churchId);
+  const attempt=$('#avanteAttemptSelect');
+  const msg=$('#avanteRuleMessage');
+  if(!church||!attempt||!msg)return;
+  const second=attempt.querySelector('option[value="2"]');
+  if(second)second.disabled=!church.segundaAberta;
+  if(!church.segundaAberta&&attempt.value==='2')attempt.value='1';
+  msg.className='avante-rule-message '+(church.segundaAberta?'open':'locked');
+  msg.textContent=church.segundaAberta
+    ? church.name+' atingiu a sua meta na 1.ª contribuição. A 2.ª contribuição está autorizada.'
+    : church.name+' ainda não atingiu a meta individual de '+avanteMoney(church.meta)+'. A 2.ª contribuição permanece bloqueada.';
+}
+function setupAvanteTimer(){
+  clearInterval(avanteState.timer); avanteState.timer=null;
+  if($('#avanteAutoRefresh')?.checked && $('#contribuicoesView')?.classList.contains('active')) avanteState.timer=setInterval(loadAvanteData,5000);
+}
+function bindAvanteModule(){
+  $('#avanteGroupSelect')?.addEventListener('change',e=>{avanteState.selectedGroup=e.target.value;renderAvanteModule();});
+  $('#avanteFormGroup')?.addEventListener('change',e=>{avanteState.selectedGroup=e.target.value;renderAvanteModule();});
+  $('#refreshAvanteBtn')?.addEventListener('click',loadAvanteData);
+  $('#avanteAutoRefresh')?.addEventListener('change',setupAvanteTimer);
+  $('#avanteChurchSelect')?.addEventListener('change',updateAvanteAttemptRule);
+  $('#avanteContributionForm')?.addEventListener('submit',async e=>{
+    e.preventDefault(); const group=avanteState.groups.find(g=>g.id===avanteState.selectedGroup); if(!group)return;
+    const churchId=$('#avanteChurchSelect').value, tentativa=Number($('#avanteAttemptSelect').value), valor=Number($('#avanteAmount').value);
+    if(!valor||valor<=0)return toast('Indique um valor superior a zero.','error');
+    const church=(group.churches||[]).find(c=>c.id===churchId);
+    if(tentativa===2&&(!church||!church.segundaAberta))return toast('A 2.ª contribuição desta igreja só é permitida depois de a 1.ª contribuição atingir a meta individual.','error');
+    const btn=e.currentTarget.querySelector('button[type="submit"]');const old=btn.textContent;btn.disabled=true;btn.textContent='A registar...';
+    try{
+      if(SANDBOX_MODE){toast('Modo teste: contribuição simulada. Nada foi gravado.');$('#avanteAmount').value='';return;}
+      const payload={action:'saveAvanteContribution',authToken:getAuthToken(),grupo_id:group.id,igreja_id:churchId,tentativa,valor};
+      const res=await fetch(window.APP_CONFIG.APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});const out=await res.json();if(!out.ok)throw new Error(out.message||'Não foi possível registar.');
+      $('#avanteAmount').value='';toast('Contribuição registada com sucesso.');await loadAvanteData();
+    }catch(err){console.error(err);toast(err.message,'error');}finally{btn.disabled=false;btn.textContent=old;}
+  });
+}
+bindAvanteModule();
