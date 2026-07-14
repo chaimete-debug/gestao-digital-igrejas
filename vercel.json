@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "cleanUrls": false,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(index.html|visitantes.html|assembleia.html|assembleia-offline.html|assembleia-manifest.json|styles.css|app.js|config.js|service-worker.js|assembleia-service-worker.js)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    }
+  ]
+}
