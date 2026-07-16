@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Avante Evangelho 2026 — Contribuições</title>
+  <meta name="theme-color" content="#064e3b">
+  <link rel="stylesheet" href="styles.css?v=54.4.0">
+  <style>
+    body{margin:0;background:radial-gradient(circle at top,#ecfdf5,#f8fafc 38%,#eef2f7);color:#0f172a}.public-avante{max-width:1500px;margin:auto;padding:24px}.public-hero{display:flex;justify-content:space-between;align-items:center;gap:20px;background:linear-gradient(135deg,#064e3b,#0f766e);color:#fff;border-radius:28px;padding:26px 30px;box-shadow:0 24px 60px rgba(6,78,59,.24);margin-bottom:18px}.public-hero h1{margin:0;font-size:clamp(28px,4vw,52px)}.public-hero p{margin:8px 0 0;color:#d1fae5;font-size:18px}.live-badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:12px 16px;border-radius:999px;font-weight:900;white-space:nowrap}.group-tabs{display:flex;gap:9px;overflow:auto;padding:7px 2px 14px}.group-tabs button{border:1px solid #cbd5e1;background:#fff;border-radius:999px;padding:11px 17px;font-weight:900;white-space:nowrap;cursor:pointer}.group-tabs button.active{background:#0f766e;color:#fff;border-color:#0f766e}.group-tabs button.honorary{border-color:#f59e0b}.group-tabs button.honorary.active{background:#92400e;border-color:#92400e}.public-table-card{background:#fff;border-radius:24px;border:1px solid #dbe7e4;overflow:hidden;box-shadow:0 18px 48px rgba(15,23,42,.09)}.public-table{width:100%;border-collapse:collapse;min-width:950px}.public-table th{background:#064e3b;color:#fff;text-align:left;padding:15px}.public-table td{padding:15px;border-bottom:1px solid #e2e8f0;font-size:18px}.public-table tr:last-child td{border-bottom:0}.public-table tr.is-honorary{background:#fffbeb}.church-rank{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#ecfdf5;color:#065f46;font-weight:900;margin-right:10px}.public-progress{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden;min-width:160px}.public-progress i{display:block;height:100%;background:linear-gradient(90deg,#f59e0b,#0f766e)}.public-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;margin:16px 0}.public-kpi{background:#fff;padding:17px;border-radius:18px;border:1px solid #dbe7e4}.public-kpi span{display:block;color:#64748b;font-size:11px;font-weight:900;text-transform:uppercase}.public-kpi strong{display:block;font-size:25px;margin-top:6px}.public-kpi.primary{background:#0f766e}.public-kpi.primary span,.public-kpi.primary strong{color:#fff}.public-note{text-align:center;color:#64748b;margin-top:14px}.unlock{color:#166534;font-weight:900}.lock{color:#9a3412;font-weight:900}.honorary-tag{display:inline-flex;margin-left:8px;padding:4px 8px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:900}.church-group{display:block;color:#64748b;font-size:12px;margin:3px 0 0 42px}.public-error{padding:24px;text-align:center;color:#b91c1c;font-weight:800}@media(max-width:900px){.public-kpis{grid-template-columns:repeat(2,1fr)}.public-hero{display:block}.live-badge{display:inline-block;margin-top:14px}.public-avante{padding:12px}.public-table td{font-size:15px}}
+  </style>
+</head>
+<body>
+  <main class="public-avante">
+    <header class="public-hero">
+      <div><h1 id="publicTitle">Avante Evangelho 2026</h1><p id="publicSubtitle">Contribuições financeiras das igrejas — Distrito da Matola</p></div>
+      <div class="live-badge">● Actualização em directo</div>
+    </header>
+    <div id="tabs" class="group-tabs"></div>
+    <div id="kpis" class="public-kpis"></div>
+    <div class="public-table-card">
+      <div class="table-scroll">
+        <table class="public-table">
+          <thead><tr><th>#</th><th>Igreja</th><th id="metaHeader">Meta</th><th>1.ª contribuição</th><th>2.ª contribuição</th><th>Total</th><th>Progresso</th></tr></thead>
+          <tbody id="rows"><tr><td colspan="7">A carregar...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <p id="note" class="public-note">A carregar...</p>
+  </main>
+  <script src="config.js?v=54.4.0"></script>
+  <script>
+    let payload=null,selected='',timer=null;
+    const money=v=>new Intl.NumberFormat('pt-MZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(v||0))+' MT';
+    const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    function tabsData(){
+      const normal=(payload?.groups||[]).map(g=>({...g,isHonorary:false}));
+      return normal.concat([{id:'HONORARIAS',name:'🏅 Igrejas Honorárias',isHonorary:true,churches:payload?.honorarias||[],metaGrupo:(payload?.metaHonoraria||0)*(payload?.honorarias||[]).length,primeiraTotal:(payload?.honorarias||[]).reduce((s,c)=>s+Number(c.primeira||0),0),segundaTotal:(payload?.honorarias||[]).reduce((s,c)=>s+Number(c.segunda||0),0),total:(payload?.honorarias||[]).reduce((s,c)=>s+Number(c.total||0),0)}]);
+    }
+    async function load(){
+      try{
+        const base=window.APP_CONFIG?.APPS_SCRIPT_URL;
+        if(!base) throw Error('URL do backend não configurada.');
+        const u=base+'?'+new URLSearchParams({action:'avantepublicdata'});
+        const r=await fetch(u,{cache:'no-store'}),o=await r.json();
+        if(!o.ok) throw Error(o.message||'Erro ao consultar as contribuições.');
+        payload=o;
+        document.getElementById('publicTitle').textContent=o.title||'Avante Evangelho 2026';
+        document.getElementById('publicSubtitle').textContent=o.subtitle||'Contribuições financeiras das igrejas — Distrito da Matola';
+        const all=tabsData();
+        if(!selected||!all.some(x=>x.id===selected)) selected=all[0]?.id||'';
+        render();
+        clearTimeout(timer); timer=setTimeout(load,Math.max(3,Number(o.refreshSeconds||5))*1000);
+      }catch(e){
+        document.getElementById('rows').innerHTML='<tr><td colspan="7" class="public-error">Não foi possível actualizar: '+esc(e.message)+'</td></tr>';
+        document.getElementById('note').textContent='Nova tentativa em 10 segundos.';
+        clearTimeout(timer); timer=setTimeout(load,10000);
+      }
+    }
+    function render(){
+      const all=tabsData(),g=all.find(x=>x.id===selected)||all[0]; if(!g)return;
+      document.getElementById('tabs').innerHTML=all.map(x=>`<button class="${x.id===g.id?'active ':''}${x.isHonorary?'honorary':''}" data-id="${esc(x.id)}">${esc(x.name)}</button>`).join('');
+      document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{selected=b.dataset.id;render()});
+      const isHonorary=!!g.isHonorary;
+      const p=g.metaGrupo?g.total/g.metaGrupo*100:0;
+      document.getElementById('metaHeader').textContent=isHonorary?'Meta honorária':'Meta';
+      document.getElementById('kpis').innerHTML=`<div class="public-kpi primary"><span>${isHonorary?'Meta honorária por igreja':'Meta do grupo'}</span><strong>${money(isHonorary?payload.metaHonoraria:g.metaGrupo)}</strong></div><div class="public-kpi"><span>1.ª contribuição</span><strong>${money(g.primeiraTotal)}</strong></div><div class="public-kpi"><span>2.ª contribuição</span><strong>${money(g.segundaTotal)}</strong></div><div class="public-kpi"><span>Total</span><strong>${money(g.total)}</strong></div><div class="public-kpi"><span>${isHonorary?'Igrejas':'Progresso'}</span><strong>${isHonorary?(g.churches||[]).length:p.toFixed(1)+'%'}</strong></div>`;
+      const churches=g.churches||[];
+      document.getElementById('rows').innerHTML=churches.length?churches.map((c,i)=>{
+        const target=isHonorary?payload.metaHonoraria:c.meta,cp=target?Math.min(100,c.total/target*100):0;
+        return `<tr class="${c.honoraria?'is-honorary':''}"><td><span class="church-rank">${i+1}</span></td><td><strong>${esc(c.name)}</strong>${c.honoraria?'<span class="honorary-tag">🏅 Honorária</span>':''}${isHonorary?`<small class="church-group">${esc(c.groupName||c.groupId||'')}</small>`:''}</td><td>${money(target)}</td><td>${money(c.primeira)}</td><td>${money(c.segunda)}</td><td><strong>${money(c.total)}</strong></td><td><div class="public-progress"><i style="width:${cp}%"></i></div><small>${cp.toFixed(1)}%</small></td></tr>`;
+      }).join(''):'<tr><td colspan="7">Ainda não existem igrejas nesta categoria.</td></tr>';
+      const time=payload.updatedAt?new Date(payload.updatedAt).toLocaleTimeString('pt-MZ'):new Date().toLocaleTimeString('pt-MZ');
+      if(isHonorary){
+        document.getElementById('note').innerHTML=`<span class="unlock">Regra honorária:</span> qualquer igreja alcança esta distinção quando o total da 1.ª contribuição ou a soma das duas contribuições atinge ${money(payload.metaHonoraria)}. Actualizado às ${time}.`;
+      }else{
+        const eligible=churches.filter(c=>c.segundaAberta).length;
+        document.getElementById('note').innerHTML=`<span class="unlock">Regra individual:</span> ${eligible} de ${churches.length} igrejas estão autorizadas a fazer a 2.ª contribuição por terem atingido a respectiva meta na 1.ª contribuição. Actualizado às ${time}.`;
+      }
+    }
+    load();
+  </script>
+</body>
+</html>
