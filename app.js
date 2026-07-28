@@ -5932,7 +5932,7 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.5.4'
+    clientVersion:'54.6.0'
   };
 }
 
@@ -6645,6 +6645,34 @@ function avanteCanManage(){ return !!avanteData()?.canManage; }
 function avanteContribution(churchId, phase){
   return (avanteData()?.contributions || []).find(r => r.igrejaId===churchId && String(r.fase).toUpperCase()===phase && String(r.estado).toUpperCase()==='CONFIRMADA') || null;
 }
+function applyAvanteAccessMode(){
+  const canManage=avanteCanManage();
+  const entryCard=$('#avanteForm');
+  const grid=$('.avante-admin-grid');
+  const title=$('#avanteModuleTitle');
+  const description=$('#avanteModuleDescription');
+  const badge=$('#avanteAccessMode');
+
+  // O formulário não é apenas desactivado: fica totalmente oculto para
+  // utilizadores de consulta. O cartão de progresso ocupa toda a largura.
+  if(entryCard) entryCard.classList.toggle('hidden', !canManage);
+  if(grid) grid.classList.toggle('view-only', !canManage);
+
+  if(title){
+    title.textContent=canManage
+      ? 'Registo e acompanhamento das contribuições'
+      : 'Acompanhamento das contribuições';
+  }
+  if(description){
+    description.textContent=canManage
+      ? 'Registe a 1.ª e a 2.ª contribuição de cada igreja. A 2.ª contribuição só é aceite quando a igreja atingir a sua meta na 1.ª contribuição.'
+      : 'Consulte o progresso das igrejas, os totais por grupo e a evolução anual. Esta visualização não permite novos lançamentos.';
+  }
+  if(badge){
+    badge.textContent=canManage ? 'Modo de lançamento' : 'Modo de consulta';
+    badge.className='pill'+(canManage?'':' avante-view-badge');
+  }
+}
 function setAvanteFormEnabled(){
   const data=avanteData();
   const hasData=!!(data && Array.isArray(data.groups) && data.groups.length);
@@ -6969,6 +6997,7 @@ function renderAvanteModule(rawData){
     const valid=stamp && !Number.isNaN(stamp.getTime());
     updated.textContent=valid?`Actualizado: ${stamp.toLocaleTimeString('pt-MZ')}`:'—';
   }
+  applyAvanteAccessMode();
   populateAvanteSelectors();
   renderAvanteChurchTable();
   renderAvanteHistory();
@@ -7397,3 +7426,5 @@ setupSandboxBanner();
 })();
 
 // v54.5.4 — elimina igrejas duplicadas na comparação e no selector de tendência, consolidando registos históricos pelo nome.
+
+// v54.6.0 — separa o Avante Evangelho em visualização geral pública e área autenticada de lançamento; o formulário só é exibido a perfis com permissão de gestão.

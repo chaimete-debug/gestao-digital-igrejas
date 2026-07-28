@@ -460,7 +460,7 @@ body.sandbox-mode .primary-btn:hover{background:#115e59;}
 }
 
 
-/* v54.5.3 — histórico e comparação anual do Avante Evangelho */
+/* v54.5.0 — histórico e comparação anual do Avante Evangelho */
 .avante-comparison-card{margin-top:22px}
 .avante-comparison-card .card-line{align-items:flex-start;gap:18px}
 .avante-comparison-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
@@ -489,48 +489,7 @@ body.sandbox-mode .primary-btn:hover{background:#115e59;}
   .avante-annual-value{grid-column:2;text-align:left}
 }
 
-/* v54.5.3 — tabelas de comparação do Avante em largura total */
-.avante-comparison-grid{
-  grid-template-columns:minmax(0,1fr);
-  gap:26px;
-}
-.avante-comparison-grid > div{
-  min-width:0;
-  width:100%;
-}
-.avante-comparison-grid .table-scroll{
-  width:100%;
-  max-width:100%;
-  border:1px solid #e2e8f0;
-  border-radius:18px;
-  background:#fff;
-}
-#avanteGroupComparisonTable{
-  min-width:760px;
-}
-#avanteChurchComparisonTable{
-  min-width:940px;
-}
-#avanteChurchComparisonTable th:nth-child(1),
-#avanteChurchComparisonTable td:nth-child(1){
-  min-width:190px;
-}
-#avanteChurchComparisonTable th:nth-child(2),
-#avanteChurchComparisonTable td:nth-child(2){
-  min-width:110px;
-}
-#avanteChurchComparisonTable th:nth-child(n+3),
-#avanteChurchComparisonTable td:nth-child(n+3){
-  min-width:150px;
-  white-space:nowrap;
-}
-@media(max-width:720px){
-  #avanteGroupComparisonTable{min-width:720px}
-  #avanteChurchComparisonTable{min-width:860px}
-}
 
-/* v54.5.4 — tendência da igreja imediatamente após os selectores */
-.avante-church-trend-card-immediate{
-  margin-top: 14px;
-  margin-bottom: 14px;
-}
+/* Avante Evangelho — dois modos de acesso (v54.6.0) */
+.login-access-divider{display:flex;align-items:center;gap:12px;margin:20px 0 14px;color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.login-access-divider:before,.login-access-divider:after{content:"";height:1px;background:var(--line);flex:1}.login-public-access{display:grid;gap:4px;text-decoration:none;border:1px solid #99f6e4;background:#ecfdf5;color:#065f46;border-radius:16px;padding:14px 16px;transition:.18s}.login-public-access:hover{border-color:#14b8a6;background:#ccfbf1;transform:translateY(-1px)}.login-public-access strong{font-size:15px}.login-public-access small{color:#0f766e;line-height:1.4}.avante-admin-grid.view-only{grid-template-columns:minmax(0,1fr)}.avante-admin-grid.view-only .avante-group-card{width:100%;min-width:0}.avante-view-badge{background:#e0f2fe;color:#075985}.avante-admin-actions .pill{white-space:nowrap}
+@media(max-width:640px){.login-public-access{padding:13px 14px}.avante-admin-actions .pill{width:100%;justify-content:center}}
