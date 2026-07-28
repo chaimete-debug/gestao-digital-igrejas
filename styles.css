@@ -460,7 +460,7 @@ body.sandbox-mode .primary-btn:hover{background:#115e59;}
 }
 
 
-/* v54.5.1 — histórico e comparação anual do Avante Evangelho */
+/* v54.5.2 — histórico e comparação anual do Avante Evangelho */
 .avante-comparison-card{margin-top:22px}
 .avante-comparison-card .card-line{align-items:flex-start;gap:18px}
 .avante-comparison-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
