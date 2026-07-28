@@ -4157,7 +4157,7 @@ window.addEventListener('appinstalled', () => {
 
 window.matchMedia('(display-mode: standalone)').addEventListener?.('change', updateInstallAppUi);
 
-// v54.5.4: mantém a autenticação por separador e aplica escopo de leitura por igreja. Ao fechar o
+// v54.5.1: mantém a autenticação por separador e aplica escopo de leitura por igreja. Ao fechar o
 // separador ou o navegador, a palavra-passe volta a ser obrigatória.
 function getAuthToken(){
   if(SANDBOX_MODE) return sessionStorage.getItem(AUTH_TOKEN_KEY) || SANDBOX_TOKEN;
@@ -4269,7 +4269,7 @@ async function setSelectedWorkChurch(id){
     setMemberScopeStatus();
   }
 
-  // v54.5.4: a alteração da igreja actualiza imediatamente todas as
+  // v54.5.1: a alteração da igreja actualiza imediatamente todas as
   // consultas que dependem do escopo, sem misturar dados entre igrejas.
   await refreshScopedViewsAfterChurchChange_();
 }
@@ -5932,7 +5932,7 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.5.4'
+    clientVersion:'54.5.2'
   };
 }
 
@@ -6599,6 +6599,41 @@ function avanteLocalDate(){
   const d=new Date(), off=d.getTimezoneOffset()*60000;
   return new Date(d.getTime()-off).toISOString().slice(0,10);
 }
+function normalizeAvantePayload(raw){
+  const data={...(raw||{})};
+  const topChurches=Array.isArray(data.churches)?data.churches:(Array.isArray(data.igrejas)?data.igrejas:[]);
+  const rawGroups=Array.isArray(data.groups)?data.groups:(Array.isArray(data.grupos)?data.grupos:[]);
+  data.groups=rawGroups.map((g,index)=>{
+    const id=String(g.id ?? g.groupId ?? g.grupoId ?? g.grupo_id ?? '').trim();
+    const name=String((g.name ?? g.groupName ?? g.nomeGrupo ?? g.nome_grupo ?? id) || `Grupo ${index+1}`);
+    let source=Array.isArray(g.churches)?g.churches:(Array.isArray(g.igrejas)?g.igrejas:[]);
+    if(!source.length && topChurches.length){
+      source=topChurches.filter(c=>String(c.groupId ?? c.grupoId ?? c.grupo_id ?? '').trim()===id);
+    }
+    const churches=source.map((c,churchIndex)=>({
+      ...c,
+      id:String(c.id ?? c.churchId ?? c.igrejaId ?? c.igreja_id ?? '').trim(),
+      name:String(c.name ?? c.churchName ?? c.igrejaNome ?? c.igreja_nome ?? c.label ?? c.igreja_id ?? ''),
+      order:Number(c.order ?? c.ordem ?? c.ordem_grupo ?? churchIndex+1) || churchIndex+1,
+      meta:Number(c.meta ?? c.metaIndividual ?? c.meta_individual ?? g.metaIndividual ?? g.meta_individual ?? 0) || 0,
+      primeira:Number(c.primeira ?? c.primeiraTotal ?? c.primeira_contribuicao ?? 0) || 0,
+      segunda:Number(c.segunda ?? c.segundaTotal ?? c.segunda_contribuicao ?? 0) || 0,
+      total:Number(c.total ?? 0) || 0,
+      segundaAberta:Boolean(c.segundaAberta ?? c.segunda_aberta ?? false),
+      honoraria:Boolean(c.honoraria ?? c.honorária ?? false)
+    })).filter(c=>c.id);
+    return {
+      ...g,
+      id,
+      name,
+      order:Number(g.order ?? g.ordem ?? index+1) || index+1,
+      churches
+    };
+  }).filter(g=>g.id);
+  data.contributions=Array.isArray(data.contributions)?data.contributions:[];
+  data.overall=data.overall||data.resumo||{};
+  return data;
+}
 function avanteData(){ return state.avante?.data || null; }
 function avanteGroups(){ return avanteData()?.groups || []; }
 function avanteAllChurches(){ return avanteGroups().flatMap(g => (g.churches||[]).map(c => ({...c, groupId:g.id, groupName:g.name}))); }
@@ -6611,29 +6646,61 @@ function avanteContribution(churchId, phase){
   return (avanteData()?.contributions || []).find(r => r.igrejaId===churchId && String(r.fase).toUpperCase()===phase && String(r.estado).toUpperCase()==='CONFIRMADA') || null;
 }
 function setAvanteFormEnabled(){
-  const can=avanteCanManage();
+  const data=avanteData();
+  const hasData=!!(data && Array.isArray(data.groups) && data.groups.length);
+  const eventActive=!!data?.eventoActivo;
+  const canManage=avanteCanManage();
+  const canEdit=hasData && eventActive && canManage;
   const note=$('#avantePermissionNote');
   if(note){
-    note.classList.toggle('hidden',can);
-    note.className='avante-rule-note bad'+(can?' hidden':'');
-    note.textContent=can?'':'A consulta está disponível, mas apenas o Tesoureiro Distrital ou o Administrador de IT pode confirmar e corrigir contribuições.';
+    if(!hasData){
+      note.className='avante-rule-note bad';
+      note.textContent=`Não foram recebidos grupos e igrejas para o ano ${data?.year||'seleccionado'}. Confirme a implementação /exec do Apps Script e a folha Avante_Configuracao.`;
+    }else if(!eventActive){
+      note.className='avante-rule-note ok';
+      note.textContent=`A edição ${data.year||''} encontra-se encerrada. Os grupos, igrejas e resultados permanecem disponíveis para consulta, mas novos lançamentos estão bloqueados.`;
+    }else if(!canManage){
+      note.className='avante-rule-note bad';
+      note.textContent='A consulta está disponível. Apenas o Tesoureiro Distrital ou o Administrador de IT pode confirmar e corrigir contribuições.';
+    }else{
+      note.className='avante-rule-note hidden';
+      note.textContent='';
+    }
   }
-  ['avanteGrupo','avanteIgreja','avanteMeta','avanteFase','avanteData','avanteValor','avanteReferencia','avanteObservacoes','saveAvanteBtn','clearAvanteBtn'].forEach(id=>{
-    const el=$('#'+id); if(el) el.disabled=!can;
+
+  // Grupo e Igreja são filtros de consulta; devem continuar utilizáveis mesmo
+  // quando o evento está encerrado ou o utilizador não tem permissão de edição.
+  const group=$('#avanteGrupo'), church=$('#avanteIgreja');
+  if(group) group.disabled=!hasData;
+  if(church) church.disabled=!hasData;
+  const meta=$('#avanteMeta'); if(meta) meta.disabled=false;
+
+  ['avanteFase','avanteData','avanteValor','avanteReferencia','avanteObservacoes','saveAvanteBtn','clearAvanteBtn'].forEach(id=>{
+    const el=$('#'+id); if(el) el.disabled=!canEdit;
   });
 }
 function populateAvanteSelectors(){
   const data=avanteData(); if(!data) return;
   const groupSelect=$('#avanteGrupo'), churchSelect=$('#avanteIgreja');
   if(!groupSelect || !churchSelect) return;
-  const priorGroup=groupSelect.value || state.avante.selectedGroup || data.groups[0]?.id || '';
-  groupSelect.innerHTML=(data.groups||[]).map(g=>`<option value="${avanteEscape(g.id)}">${avanteEscape(g.name)}</option>`).join('');
-  groupSelect.value=(data.groups||[]).some(g=>g.id===priorGroup)?priorGroup:(data.groups[0]?.id||'');
+  const groups=Array.isArray(data.groups)?data.groups:[];
+  if(!groups.length){
+    groupSelect.innerHTML=`<option value="">Nenhum grupo configurado para ${avanteEscape(data.year||'este ano')}</option>`;
+    churchSelect.innerHTML='<option value="">Nenhuma igreja disponível</option>';
+    state.avante.selectedGroup='';
+    renderAvanteTabs();
+    syncAvanteForm(false);
+    return;
+  }
+  const priorGroup=groupSelect.value || state.avante.selectedGroup || groups[0]?.id || '';
+  groupSelect.innerHTML=groups.map(g=>`<option value="${avanteEscape(g.id)}">${avanteEscape(g.name)}</option>`).join('');
+  groupSelect.value=groups.some(g=>g.id===priorGroup)?priorGroup:(groups[0]?.id||'');
   state.avante.selectedGroup=groupSelect.value;
-  const group=(data.groups||[]).find(g=>g.id===groupSelect.value);
+  const group=groups.find(g=>g.id===groupSelect.value);
   const priorChurch=churchSelect.value;
-  churchSelect.innerHTML='<option value="">Seleccione...</option>'+((group?.churches)||[]).slice().sort((a,b)=>a.order-b.order).map(c=>`<option value="${avanteEscape(c.id)}">${avanteEscape(c.name)}</option>`).join('');
-  if(priorChurch && (group?.churches||[]).some(c=>c.id===priorChurch)) churchSelect.value=priorChurch;
+  const churches=((group?.churches)||[]).slice().sort((a,b)=>(Number(a.order)||0)-(Number(b.order)||0));
+  churchSelect.innerHTML='<option value="">Seleccione...</option>'+churches.map(c=>`<option value="${avanteEscape(c.id)}">${avanteEscape(c.name)}</option>`).join('');
+  if(priorChurch && churches.some(c=>c.id===priorChurch)) churchSelect.value=priorChurch;
   renderAvanteTabs();
   syncAvanteForm(false);
 }
@@ -6649,12 +6716,18 @@ function renderAvanteTabs(){
   }));
 }
 function syncAvanteForm(prefill=true){
+  const data=avanteData();
   const church=avanteSelectedChurch(), phase=String($('#avanteFase')?.value||'PRIMEIRA').toUpperCase();
   const meta=$('#avanteMeta'), rule=$('#avanteEligibility'), save=$('#saveAvanteBtn'), value=$('#avanteValor');
+  const canEdit=!!data?.eventoActivo && avanteCanManage();
   if(!church){
     if(meta) meta.value='';
-    if(rule){rule.className='avante-rule-note'; rule.textContent='Seleccione uma igreja.';}
-    if(save) save.disabled=!avanteCanManage();
+    if(rule){
+      rule.className='avante-rule-note';
+      rule.textContent=(data?.groups||[]).length?'Seleccione uma igreja.':`Não existem igrejas carregadas para ${data?.year||'o ano seleccionado'}.`;
+    }
+    if(save) save.disabled=true;
+    if(value) value.disabled=true;
     return;
   }
   if(meta) meta.value=money(church.meta);
@@ -6665,11 +6738,15 @@ function syncAvanteForm(prefill=true){
     if($('#avanteObservacoes')) $('#avanteObservacoes').value=existing?.observacoes||'';
     if(existing?.data && $('#avanteData')) $('#avanteData').value=existing.data;
   }
-  const allowed=phase==='PRIMEIRA' || church.segundaAberta;
+  const phaseAllowed=phase==='PRIMEIRA' || church.segundaAberta;
+  const allowed=canEdit && phaseAllowed;
   if(rule){
-    if(church.honoraria){
+    if(!data?.eventoActivo){
       rule.className='avante-rule-note ok';
-      rule.textContent=`Igreja Honorária: esta igreja possui o maior total acumulado do Distrito, no valor de ${money(church.total)}.`;
+      rule.textContent=`Edição ${data?.year||''} encerrada. Dados disponíveis apenas para consulta. Total da igreja: ${money(church.total)}.`;
+    }else if(church.honoraria){
+      rule.className='avante-rule-note ok';
+      rule.textContent=`Igreja Honorária: total acumulado de ${money(church.total)} (meta honorária: ${money(data?.metaHonoraria)}).`;
     }else if(phase==='SEGUNDA' && !church.segundaAberta){
       rule.className='avante-rule-note bad';
       rule.textContent=`2.ª contribuição vedada. A 1.ª contribuição é ${money(church.primeira)} e a meta individual é ${money(church.meta)}.`;
@@ -6681,8 +6758,8 @@ function syncAvanteForm(prefill=true){
       rule.textContent=`Meta individual: ${money(church.meta)}. Para ter acesso à 2.ª contribuição, este valor deve ser atingido na 1.ª contribuição.`;
     }
   }
-  if(save) save.disabled=!avanteCanManage() || !allowed;
-  if(value) value.disabled=!avanteCanManage() || !allowed;
+  if(save) save.disabled=!allowed;
+  if(value) value.disabled=!allowed;
 }
 function renderAvanteChurchTable(){
   const data=avanteData(), tbody=$('#avanteChurchTable tbody'); if(!data||!tbody) return;
@@ -6714,100 +6791,6 @@ function avantePercent(value){
   const n=Number(value);
   return `${n>0?'+':''}${n.toFixed(1)}%`;
 }
-function avanteTrendNormalise(value){
-  return String(value||'')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g,'')
-    .toLowerCase()
-    .trim()
-    .replace(/\b(?:igreja\s+do\s+nazareno|igreja\s+nazareno)\b/g,'')
-    .replace(/\b(?:de|do|da|em)\b/g,' ')
-    .replace(/[^a-z0-9]+/g,'_')
-    .replace(/^_+|_+$/g,'');
-}
-function avanteTrendAlias(key){
-  const aliases={
-    khongolote_1:'kongolote_1',kongolote_1:'kongolote_1',
-    khongolote_2:'kongolote_2',kongolote_2:'kongolote_2',
-    sao_damanso_makhelene:'makhelene',makhelene:'makhelene',
-    nwamatibyana:'matibyana',matibyana:'matibyana',
-    mulotane_bili:'mulotana_bily',mulotana_bily:'mulotana_bily',
-    mussumbuluco:'mussumbuluko',mussumbuluko:'mussumbuluko',
-    xinyenpfana:'xinyepfana',xinyepfana:'xinyepfana',
-    malhampsane:'malhampsene',malhampsene:'malhampsene',
-    malhampsane_ii:'malhampsene_2',malhampsene_2:'malhampsene_2',
-    makopene:'macopene',macopene:'macopene',
-    tchonissa:'txonissa',txonissa:'txonissa',
-    mutate:'mutatel',mutatel:'mutatel',
-    b_liberdade:'liberdade',bairro_liberdade:'liberdade',
-    b_matola:'bairro_da_matola',bairro_matola:'bairro_da_matola',
-    nkombe:'nkobe',nkobe:'nkobe',
-    vale_infulene:'vale_de_infulene',vale_de_infulene:'vale_de_infulene'
-  };
-  return aliases[key]||key;
-}
-function avanteTrendIdentityKeys(item){
-  let idKey=avanteTrendNormalise(item?.id).replace(/^(?:grupo|g)_?\d+_+/, '');
-  let nameKey=avanteTrendNormalise(item?.name);
-  idKey=avanteTrendAlias(idKey);
-  nameKey=avanteTrendAlias(nameKey);
-  return Array.from(new Set([idKey,nameKey].filter(Boolean)));
-}
-function avanteMergeAnnualValues(target, source){
-  const merged={...(target||{})};
-  Object.entries(source||{}).forEach(([year,value])=>{
-    if(value!==null && value!==undefined && value!=='') merged[year]=value;
-    else if(!Object.prototype.hasOwnProperty.call(merged,year)) merged[year]=value;
-  });
-  return merged;
-}
-function avanteComparisonChurches(){
-  const comp=avanteComparison();
-  const records=new Map();
-  const aliases=new Map();
-
-  (comp?.churches||[]).forEach(c=>{
-    const keys=avanteTrendIdentityKeys(c);
-    if(!keys.length || keys.some(key=>key.includes('honoraria'))) return;
-
-    let canonical='';
-    for(const key of keys){
-      if(aliases.has(key)){ canonical=aliases.get(key); break; }
-      if(records.has(key)){ canonical=key; break; }
-    }
-    if(!canonical) canonical=keys[0];
-
-    if(!records.has(canonical)){
-      records.set(canonical,{...c,id:canonical,values:{...(c.values||{})}});
-    }else{
-      const current=records.get(canonical);
-      current.values=avanteMergeAnnualValues(current.values,c.values);
-      const currentName=String(current.name||'').trim();
-      const incomingName=String(c.name||'').trim();
-      if(!currentName || incomingName.length>currentName.length) current.name=incomingName;
-      if(!current.groupId && c.groupId) current.groupId=c.groupId;
-      if(!current.groupName && c.groupName) current.groupName=c.groupName;
-    }
-
-    keys.forEach(key=>aliases.set(key,canonical));
-  });
-
-  const uniqueByLabel=new Map();
-  Array.from(records.values()).forEach(c=>{
-    const labelKey=avanteTrendAlias(avanteTrendNormalise(c.name));
-    const existing=uniqueByLabel.get(labelKey);
-    if(!existing){
-      uniqueByLabel.set(labelKey,c);
-      return;
-    }
-    existing.values=avanteMergeAnnualValues(existing.values,c.values);
-    if(String(c.name||'').length>String(existing.name||'').length) existing.name=c.name;
-  });
-
-  return Array.from(uniqueByLabel.values())
-    .sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt',{sensitivity:'base'}));
-}
-
 function populateAvanteComparisonSelectors(){
   const comp=avanteComparison(); if(!comp) return;
   const years=(comp.yearNumbers||[]).slice().sort((a,b)=>a-b);
@@ -6824,7 +6807,7 @@ function populateAvanteComparisonSelectors(){
   compareSel.value=years.includes(compare)?String(compare):String(current);
   state.avante.comparisonBaseYear=Number(baseSel.value);
   state.avante.comparisonYear=Number(compareSel.value);
-  const churches=avanteComparisonChurches();
+  const churches=(comp.churches||[]).slice().sort((a,b)=>a.name.localeCompare(b.name,'pt'));
   churchSel.innerHTML=churches.map(c=>`<option value="${avanteEscape(c.id)}">${avanteEscape(c.name)}</option>`).join('');
   const trendId=state.avante.trendChurchId||churches[0]?.id||'';
   churchSel.value=churches.some(c=>c.id===trendId)?trendId:(churches[0]?.id||'');
@@ -6841,7 +6824,7 @@ function renderAvanteAnnualBars(){
 }
 function renderAvanteChurchTrend(){
   const comp=avanteComparison(), el=$('#avanteChurchTrendBars'); if(!comp||!el) return;
-  const church=avanteComparisonChurches().find(c=>c.id===state.avante.trendChurchId);
+  const church=(comp.churches||[]).find(c=>c.id===state.avante.trendChurchId);
   if(!church){el.innerHTML='<p class="muted">Seleccione uma igreja.</p>';return;}
   const years=comp.yearNumbers||[], vals=years.map(y=>avanteYearValue(church.values,y));
   const max=Math.max(1,...vals.filter(v=>v!==null).map(Number));
@@ -6884,16 +6867,31 @@ function renderAvanteComparison(){
     }).join('');
   }
 
-  const movements=avanteComparisonChurches().map(c=>{
+  // v54.5.2: apresenta todas as igrejas. As comparáveis surgem primeiro,
+  // ordenadas pela maior variação absoluta; as restantes aparecem no fim,
+  // por ordem alfabética, com indicação de ausência de dados comparáveis.
+  const movements=(comp.churches||[]).map(c=>{
     const base=avanteYearValue(c.values,baseYear),current=avanteYearValue(c.values,compareYear),v=avanteVariation(base,current);
     return {...c,base,current,...v};
-  }).filter(x=>x.comparable).sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta)).slice(0,12);
+  }).sort((a,b)=>{
+    if(a.comparable!==b.comparable) return a.comparable?-1:1;
+    if(a.comparable&&b.comparable){
+      const byVariation=Math.abs(b.delta)-Math.abs(a.delta);
+      if(byVariation!==0) return byVariation;
+    }
+    return String(a.name||'').localeCompare(String(b.name||''),'pt');
+  });
   const churchBody=$('#avanteChurchComparisonTable tbody');
   if(churchBody){
     churchBody.innerHTML=movements.map(c=>{
-      const cls=c.delta>0?'positive':(c.delta<0?'negative':'neutral');
-      return `<tr><td><strong>${avanteEscape(c.name)}</strong></td><td>${avanteEscape(c.groupName||c.groupId)}</td><td>${money(c.base)}</td><td>${money(c.current)}</td><td class="${cls}">${avanteSignedMoney(c.delta)}<small>${avantePercent(c.growthPct)}</small></td></tr>`;
-    }).join('')||'<tr><td colspan="5">Não existem dados comparáveis para os anos seleccionados.</td></tr>';
+      const cls=!c.comparable?'neutral':(c.delta>0?'positive':(c.delta<0?'negative':'neutral'));
+      const baseText=c.base===null?'—':money(c.base);
+      const currentText=c.current===null?'—':money(c.current);
+      const variationText=c.comparable
+        ?`${avanteSignedMoney(c.delta)}<small>${avantePercent(c.growthPct)}</small>`
+        :`—<small>Sem dados comparáveis</small>`;
+      return `<tr><td><strong>${avanteEscape(c.name)}</strong></td><td>${avanteEscape(c.groupName||c.groupId)}</td><td>${baseText}</td><td>${currentText}</td><td class="${cls}">${variationText}</td></tr>`;
+    }).join('')||'<tr><td colspan="5">Não existem igrejas configuradas para comparação.</td></tr>';
   }
   renderAvanteAnnualBars();
   renderAvanteChurchTrend();
@@ -6908,7 +6906,8 @@ function renderAvanteHistory(){
   }).join('') || '<tr><td colspan="7">Ainda não existem contribuições registadas.</td></tr>';
   $$('#avanteHistoryTable .avante-anular-btn').forEach(btn=>btn.addEventListener('click',()=>deleteAvanteContribution(btn.dataset.id)));
 }
-function renderAvanteModule(data){
+function renderAvanteModule(rawData){
+  const data=normalizeAvantePayload(rawData);
   state.avante.data=data;
   const o=data.overall||{};
   renderKpis('avanteKpis',[
@@ -6916,10 +6915,16 @@ function renderAvanteModule(data){
     {label:'1.ª contribuição',value:money(o.primeira)},
     {label:'2.ª contribuição',value:money(o.segunda)},
     {label:'Total acumulado',value:money(o.total)},
-    {label:'Igreja Honorária',value:data.igrejaHonoraria?.name||'Nenhuma'}
+    {label:'Igrejas honorárias',value:o.honorarias||0}
   ]);
-  const status=$('#avanteEventStatus'); if(status) status.textContent=`${data.year} · ${data.eventoActivo?'Activo':'Encerrado'}`;
-  const updated=$('#avanteUpdatedAt'); if(updated) updated.textContent=data.updatedAt?`Actualizado: ${new Date(data.updatedAt).toLocaleTimeString('pt-MZ')}`:'—';
+  const status=$('#avanteEventStatus');
+  if(status) status.textContent=`${data.year||'—'} · ${data.eventoActivo?'Activo':'Encerrado'}`;
+  const updated=$('#avanteUpdatedAt');
+  if(updated){
+    const stamp=data.updatedAt?new Date(data.updatedAt):null;
+    const valid=stamp && !Number.isNaN(stamp.getTime());
+    updated.textContent=valid?`Actualizado: ${stamp.toLocaleTimeString('pt-MZ')}`:'—';
+  }
   populateAvanteSelectors();
   renderAvanteChurchTable();
   renderAvanteHistory();
@@ -6927,21 +6932,50 @@ function renderAvanteModule(data){
   setAvanteFormEnabled();
   syncAvanteForm(false);
 }
+function showAvanteLoadError(message){
+  const text=String(message||'Não foi possível carregar o Avante Evangelho.');
+  const group=$('#avanteGrupo'), church=$('#avanteIgreja'), rule=$('#avanteEligibility');
+  if(group){group.innerHTML='<option value="">Falha ao carregar grupos</option>';group.disabled=true;}
+  if(church){church.innerHTML='<option value="">Falha ao carregar igrejas</option>';church.disabled=true;}
+  if(rule){rule.className='avante-rule-note bad';rule.textContent=text;}
+  const tbody=$('#avanteChurchTable tbody');
+  if(tbody) tbody.innerHTML=`<tr><td colspan="6">${avanteEscape(text)}</td></tr>`;
+}
+async function fetchAvanteEndpoint(url,params){
+  const res=await fetch(url+'?'+new URLSearchParams(params).toString(),{cache:'no-store'});
+  const text=await res.text();
+  let out;
+  try{out=JSON.parse(text);}catch(_err){
+    throw new Error('O Apps Script devolveu uma resposta inválida. Confirme se o URL /exec em config.js aponta para a implementação mais recente.');
+  }
+  if(!res.ok || !out?.ok) throw new Error(out?.message||out?.error||`Falha no endpoint ${params.action}.`);
+  return out;
+}
 async function loadAvanteModule(){
   if(state.avante.loading) return;
-  const url=window.APP_CONFIG.APPS_SCRIPT_URL, token=getAuthToken();
+  const url=window.APP_CONFIG?.APPS_SCRIPT_URL, token=getAuthToken();
   if(!url||!token) return showLogin('Sessão expirada. Faça login novamente.');
   state.avante.loading=true;
   try{
-    const res=await fetch(url+'?'+new URLSearchParams({action:'avantedata',token}).toString(),{cache:'no-store'});
-    const out=await res.json();
-    if(!out.ok) throw new Error(out.message||'Não foi possível carregar o Avante Evangelho.');
+    let out;
+    try{
+      out=await fetchAvanteEndpoint(url,{action:'avantedata',token});
+    }catch(adminError){
+      console.warn('Falha no endpoint administrativo do Avante; a tentar modo de consulta pública.',adminError);
+      const publicData=await fetchAvanteEndpoint(url,{action:'avantepublicdata'});
+      out={...publicData,canManage:false,contributions:[],adminLoadError:adminError.message};
+      toast('Avante carregado em modo de consulta. A implementação administrativa /exec precisa de ser actualizada.','error');
+    }
     renderAvanteModule(out);
-  }catch(e){console.error(e);toast(e.message,'error');}
-  finally{state.avante.loading=false;}
+  }catch(e){
+    console.error(e);
+    showAvanteLoadError(e.message);
+    toast(e.message,'error');
+  }finally{state.avante.loading=false;}
 }
 async function saveAvanteContribution(e){
   e.preventDefault();
+  if(!avanteData()?.eventoActivo) return toast('A edição do Avante Evangelho encontra-se encerrada para novos lançamentos.','error');
   if(!avanteCanManage()) return toast('Este perfil não pode confirmar contribuições.','error');
   const church=avanteSelectedChurch(); if(!church) return toast('Seleccione a igreja.','error');
   const phase=String($('#avanteFase')?.value||'').toUpperCase();
@@ -7288,7 +7322,7 @@ setupLoginHandlers();
 bindSecurityAndUserAdmin();
 setupSandboxBanner();
 
-// v54.5.4 — isolamento por igreja, escopo distrital/local e permissões reforçadas.
+// v54.5.2 — comparação anual apresenta todas as igrejas; mantém isolamento por igreja e permissões reforçadas.
 // A aplicação só é mostrada depois de o backend confirmar o token.
 (function startAuthenticatedApp(){
   // Limpa a persistência insegura usada por versões anteriores.
