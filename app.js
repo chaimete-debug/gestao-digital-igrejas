@@ -4157,7 +4157,7 @@ window.addEventListener('appinstalled', () => {
 
 window.matchMedia('(display-mode: standalone)').addEventListener?.('change', updateInstallAppUi);
 
-// v54.5.3: mantém a autenticação por separador e aplica escopo de leitura por igreja. Ao fechar o
+// v54.5.4: mantém a autenticação por separador e aplica escopo de leitura por igreja. Ao fechar o
 // separador ou o navegador, a palavra-passe volta a ser obrigatória.
 function getAuthToken(){
   if(SANDBOX_MODE) return sessionStorage.getItem(AUTH_TOKEN_KEY) || SANDBOX_TOKEN;
@@ -4269,7 +4269,7 @@ async function setSelectedWorkChurch(id){
     setMemberScopeStatus();
   }
 
-  // v54.5.3: a alteração da igreja actualiza imediatamente todas as
+  // v54.5.4: a alteração da igreja actualiza imediatamente todas as
   // consultas que dependem do escopo, sem misturar dados entre igrejas.
   await refreshScopedViewsAfterChurchChange_();
 }
@@ -5932,7 +5932,7 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.5.3'
+    clientVersion:'54.5.4'
   };
 }
 
@@ -6714,26 +6714,98 @@ function avantePercent(value){
   const n=Number(value);
   return `${n>0?'+':''}${n.toFixed(1)}%`;
 }
-function avanteTrendCanonicalKey(item){
-  const norm=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
-  let key=norm(item?.id||item?.name).replace(/^(?:grupo|g)_?\d+_+/, '');
-  const aliases={khongolote_1:'kongolote_1',kongolote_1:'kongolote_1',khongolote_2:'kongolote_2',kongolote_2:'kongolote_2',sao_damanso_makhelene:'makhelene',makhelene:'makhelene',nwamatibyana:'matibyana',matibyana:'matibyana',mulotane_bili:'mulotana_bily',mulotana_bily:'mulotana_bily',mussumbuluco:'mussumbuluko',mussumbuluko:'mussumbuluko',xinyenpfana:'xinyepfana',xinyepfana:'xinyepfana',malhampsane:'malhampsene',malhampsene:'malhampsene',malhampsane_ii:'malhampsene_2',malhampsene_2:'malhampsene_2',makopene:'macopene',macopene:'macopene',tchonissa:'txonissa',txonissa:'txonissa',mutate:'mutatel',mutatel:'mutatel'};
+function avanteTrendNormalise(value){
+  return String(value||'')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase()
+    .trim()
+    .replace(/\b(?:igreja\s+do\s+nazareno|igreja\s+nazareno)\b/g,'')
+    .replace(/\b(?:de|do|da|em)\b/g,' ')
+    .replace(/[^a-z0-9]+/g,'_')
+    .replace(/^_+|_+$/g,'');
+}
+function avanteTrendAlias(key){
+  const aliases={
+    khongolote_1:'kongolote_1',kongolote_1:'kongolote_1',
+    khongolote_2:'kongolote_2',kongolote_2:'kongolote_2',
+    sao_damanso_makhelene:'makhelene',makhelene:'makhelene',
+    nwamatibyana:'matibyana',matibyana:'matibyana',
+    mulotane_bili:'mulotana_bily',mulotana_bily:'mulotana_bily',
+    mussumbuluco:'mussumbuluko',mussumbuluko:'mussumbuluko',
+    xinyenpfana:'xinyepfana',xinyepfana:'xinyepfana',
+    malhampsane:'malhampsene',malhampsene:'malhampsene',
+    malhampsane_ii:'malhampsene_2',malhampsene_2:'malhampsene_2',
+    makopene:'macopene',macopene:'macopene',
+    tchonissa:'txonissa',txonissa:'txonissa',
+    mutate:'mutatel',mutatel:'mutatel',
+    b_liberdade:'liberdade',bairro_liberdade:'liberdade',
+    b_matola:'bairro_da_matola',bairro_matola:'bairro_da_matola',
+    nkombe:'nkobe',nkobe:'nkobe',
+    vale_infulene:'vale_de_infulene',vale_de_infulene:'vale_de_infulene'
+  };
   return aliases[key]||key;
+}
+function avanteTrendIdentityKeys(item){
+  let idKey=avanteTrendNormalise(item?.id).replace(/^(?:grupo|g)_?\d+_+/, '');
+  let nameKey=avanteTrendNormalise(item?.name);
+  idKey=avanteTrendAlias(idKey);
+  nameKey=avanteTrendAlias(nameKey);
+  return Array.from(new Set([idKey,nameKey].filter(Boolean)));
+}
+function avanteMergeAnnualValues(target, source){
+  const merged={...(target||{})};
+  Object.entries(source||{}).forEach(([year,value])=>{
+    if(value!==null && value!==undefined && value!=='') merged[year]=value;
+    else if(!Object.prototype.hasOwnProperty.call(merged,year)) merged[year]=value;
+  });
+  return merged;
 }
 function avanteComparisonChurches(){
   const comp=avanteComparison();
-  const map=new Map();
+  const records=new Map();
+  const aliases=new Map();
+
   (comp?.churches||[]).forEach(c=>{
-    const key=avanteTrendCanonicalKey(c);
-    if(!key || key.includes('honoraria')) return;
-    if(!map.has(key)) map.set(key,{...c,id:key,values:{...(c.values||{})}});
-    else{
-      const current=map.get(key);
-      current.values={...(current.values||{}),...(c.values||{})};
-      if(String(c.name||'').length>String(current.name||'').length) current.name=c.name;
+    const keys=avanteTrendIdentityKeys(c);
+    if(!keys.length || keys.some(key=>key.includes('honoraria'))) return;
+
+    let canonical='';
+    for(const key of keys){
+      if(aliases.has(key)){ canonical=aliases.get(key); break; }
+      if(records.has(key)){ canonical=key; break; }
     }
+    if(!canonical) canonical=keys[0];
+
+    if(!records.has(canonical)){
+      records.set(canonical,{...c,id:canonical,values:{...(c.values||{})}});
+    }else{
+      const current=records.get(canonical);
+      current.values=avanteMergeAnnualValues(current.values,c.values);
+      const currentName=String(current.name||'').trim();
+      const incomingName=String(c.name||'').trim();
+      if(!currentName || incomingName.length>currentName.length) current.name=incomingName;
+      if(!current.groupId && c.groupId) current.groupId=c.groupId;
+      if(!current.groupName && c.groupName) current.groupName=c.groupName;
+    }
+
+    keys.forEach(key=>aliases.set(key,canonical));
   });
-  return Array.from(map.values()).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt'));
+
+  const uniqueByLabel=new Map();
+  Array.from(records.values()).forEach(c=>{
+    const labelKey=avanteTrendAlias(avanteTrendNormalise(c.name));
+    const existing=uniqueByLabel.get(labelKey);
+    if(!existing){
+      uniqueByLabel.set(labelKey,c);
+      return;
+    }
+    existing.values=avanteMergeAnnualValues(existing.values,c.values);
+    if(String(c.name||'').length>String(existing.name||'').length) existing.name=c.name;
+  });
+
+  return Array.from(uniqueByLabel.values())
+    .sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt',{sensitivity:'base'}));
 }
 
 function populateAvanteComparisonSelectors(){
@@ -7216,7 +7288,7 @@ setupLoginHandlers();
 bindSecurityAndUserAdmin();
 setupSandboxBanner();
 
-// v54.5.3 — isolamento por igreja, escopo distrital/local e permissões reforçadas.
+// v54.5.4 — isolamento por igreja, escopo distrital/local e permissões reforçadas.
 // A aplicação só é mostrada depois de o backend confirmar o token.
 (function startAuthenticatedApp(){
   // Limpa a persistência insegura usada por versões anteriores.

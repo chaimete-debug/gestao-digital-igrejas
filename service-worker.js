@@ -1,4 +1,4 @@
-// Gestão Digital da Igreja v54.5.3
+// Gestão Digital da Igreja v54.5.4
 // Service worker mínimo: permite a instalação sem servir ficheiros desactualizados.
 self.addEventListener('install', event => {
   self.skipWaiting();

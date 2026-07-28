@@ -528,3 +528,9 @@ body.sandbox-mode .primary-btn:hover{background:#115e59;}
   #avanteGroupComparisonTable{min-width:720px}
   #avanteChurchComparisonTable{min-width:860px}
 }
+
+/* v54.5.4 — tendência da igreja imediatamente após os selectores */
+.avante-church-trend-card-immediate{
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
