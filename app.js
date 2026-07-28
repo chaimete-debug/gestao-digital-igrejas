@@ -5932,7 +5932,7 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.5.2'
+    clientVersion:'54.5.3'
   };
 }
 
@@ -7322,7 +7322,7 @@ setupLoginHandlers();
 bindSecurityAndUserAdmin();
 setupSandboxBanner();
 
-// v54.5.2 — comparação anual apresenta todas as igrejas; mantém isolamento por igreja e permissões reforçadas.
+// v54.5.3 — mantém todas as igrejas na comparação e repõe a evolução da igreja imediatamente abaixo do selector correspondente.
 // A aplicação só é mostrada depois de o backend confirmar o token.
 (function startAuthenticatedApp(){
   // Limpa a persistência insegura usada por versões anteriores.
