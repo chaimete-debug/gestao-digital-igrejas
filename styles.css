@@ -460,7 +460,7 @@ body.sandbox-mode .primary-btn:hover{background:#115e59;}
 }
 
 
-/* v54.5.2 — histórico e comparação anual do Avante Evangelho */
+/* v54.5.3 — histórico e comparação anual do Avante Evangelho */
 .avante-comparison-card{margin-top:22px}
 .avante-comparison-card .card-line{align-items:flex-start;gap:18px}
 .avante-comparison-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
@@ -487,4 +487,44 @@ body.sandbox-mode .primary-btn:hover{background:#115e59;}
 @media(max-width:720px){
   .avante-annual-row{grid-template-columns:100px 1fr}
   .avante-annual-value{grid-column:2;text-align:left}
+}
+
+/* v54.5.3 — tabelas de comparação do Avante em largura total */
+.avante-comparison-grid{
+  grid-template-columns:minmax(0,1fr);
+  gap:26px;
+}
+.avante-comparison-grid > div{
+  min-width:0;
+  width:100%;
+}
+.avante-comparison-grid .table-scroll{
+  width:100%;
+  max-width:100%;
+  border:1px solid #e2e8f0;
+  border-radius:18px;
+  background:#fff;
+}
+#avanteGroupComparisonTable{
+  min-width:760px;
+}
+#avanteChurchComparisonTable{
+  min-width:940px;
+}
+#avanteChurchComparisonTable th:nth-child(1),
+#avanteChurchComparisonTable td:nth-child(1){
+  min-width:190px;
+}
+#avanteChurchComparisonTable th:nth-child(2),
+#avanteChurchComparisonTable td:nth-child(2){
+  min-width:110px;
+}
+#avanteChurchComparisonTable th:nth-child(n+3),
+#avanteChurchComparisonTable td:nth-child(n+3){
+  min-width:150px;
+  white-space:nowrap;
+}
+@media(max-width:720px){
+  #avanteGroupComparisonTable{min-width:720px}
+  #avanteChurchComparisonTable{min-width:860px}
 }

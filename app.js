@@ -4157,7 +4157,7 @@ window.addEventListener('appinstalled', () => {
 
 window.matchMedia('(display-mode: standalone)').addEventListener?.('change', updateInstallAppUi);
 
-// v54.5.2: mantém a autenticação por separador e aplica escopo de leitura por igreja. Ao fechar o
+// v54.5.3: mantém a autenticação por separador e aplica escopo de leitura por igreja. Ao fechar o
 // separador ou o navegador, a palavra-passe volta a ser obrigatória.
 function getAuthToken(){
   if(SANDBOX_MODE) return sessionStorage.getItem(AUTH_TOKEN_KEY) || SANDBOX_TOKEN;
@@ -4269,7 +4269,7 @@ async function setSelectedWorkChurch(id){
     setMemberScopeStatus();
   }
 
-  // v54.5.2: a alteração da igreja actualiza imediatamente todas as
+  // v54.5.3: a alteração da igreja actualiza imediatamente todas as
   // consultas que dependem do escopo, sem misturar dados entre igrejas.
   await refreshScopedViewsAfterChurchChange_();
 }
@@ -5932,7 +5932,7 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.5.2'
+    clientVersion:'54.5.3'
   };
 }
 
@@ -7216,7 +7216,7 @@ setupLoginHandlers();
 bindSecurityAndUserAdmin();
 setupSandboxBanner();
 
-// v54.5.2 — isolamento por igreja, escopo distrital/local e permissões reforçadas.
+// v54.5.3 — isolamento por igreja, escopo distrital/local e permissões reforçadas.
 // A aplicação só é mostrada depois de o backend confirmar o token.
 (function startAuthenticatedApp(){
   // Limpa a persistência insegura usada por versões anteriores.
