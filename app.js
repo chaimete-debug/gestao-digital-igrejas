@@ -5932,7 +5932,7 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.5.3'
+    clientVersion:'54.5.4'
   };
 }
 
@@ -6772,6 +6772,50 @@ function renderAvanteChurchTable(){
 }
 
 function avanteComparison(){ return avanteData()?.comparison || null; }
+
+// v54.5.4: algumas igrejas chegam no histórico com IDs diferentes, embora
+// tenham o mesmo nome. Para a comparação e para o selector de tendência,
+// consolida-se cada igreja pelo nome normalizado e fundem-se os valores anuais.
+function avanteChurchKey(value){
+  return String(value||'')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,' ')
+    .trim();
+}
+function avanteComparisonChurches(){
+  const comp=avanteComparison();
+  const merged=new Map();
+  (comp?.churches||[]).forEach((church,index)=>{
+    const name=String(church?.name||church?.id||'').trim();
+    const key=avanteChurchKey(name)||`church-${index}`;
+    const incomingValues={...(church?.values||{})};
+    if(!merged.has(key)){
+      merged.set(key,{...church,name,values:incomingValues});
+      return;
+    }
+    const current=merged.get(key);
+    Object.keys(incomingValues).forEach(year=>{
+      const incoming=incomingValues[year];
+      if(incoming===null||incoming===undefined||incoming==='') return;
+      const existing=current.values?.[year];
+      if(existing===null||existing===undefined||existing===''){
+        current.values[year]=incoming;
+        return;
+      }
+      const existingNumber=Number(existing), incomingNumber=Number(incoming);
+      if(Number.isFinite(existingNumber)&&Number.isFinite(incomingNumber)&&existingNumber!==incomingNumber){
+        // Não soma registos duplicados do mesmo ano. Conserva o valor não nulo
+        // e, em caso de conflito, o de maior magnitude.
+        current.values[year]=Math.abs(incomingNumber)>Math.abs(existingNumber)?incoming:existing;
+      }
+    });
+    if(!current.groupId&&church.groupId) current.groupId=church.groupId;
+    if(!current.groupName&&church.groupName) current.groupName=church.groupName;
+  });
+  return Array.from(merged.values()).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt'));
+}
 function avanteYearValue(values, year){
   if(!values || !Object.prototype.hasOwnProperty.call(values,String(year)) && !Object.prototype.hasOwnProperty.call(values,year)) return null;
   const value=Object.prototype.hasOwnProperty.call(values,year)?values[year]:values[String(year)];
@@ -6807,7 +6851,7 @@ function populateAvanteComparisonSelectors(){
   compareSel.value=years.includes(compare)?String(compare):String(current);
   state.avante.comparisonBaseYear=Number(baseSel.value);
   state.avante.comparisonYear=Number(compareSel.value);
-  const churches=(comp.churches||[]).slice().sort((a,b)=>a.name.localeCompare(b.name,'pt'));
+  const churches=avanteComparisonChurches();
   churchSel.innerHTML=churches.map(c=>`<option value="${avanteEscape(c.id)}">${avanteEscape(c.name)}</option>`).join('');
   const trendId=state.avante.trendChurchId||churches[0]?.id||'';
   churchSel.value=churches.some(c=>c.id===trendId)?trendId:(churches[0]?.id||'');
@@ -6824,7 +6868,7 @@ function renderAvanteAnnualBars(){
 }
 function renderAvanteChurchTrend(){
   const comp=avanteComparison(), el=$('#avanteChurchTrendBars'); if(!comp||!el) return;
-  const church=(comp.churches||[]).find(c=>c.id===state.avante.trendChurchId);
+  const church=avanteComparisonChurches().find(c=>c.id===state.avante.trendChurchId);
   if(!church){el.innerHTML='<p class="muted">Seleccione uma igreja.</p>';return;}
   const years=comp.yearNumbers||[], vals=years.map(y=>avanteYearValue(church.values,y));
   const max=Math.max(1,...vals.filter(v=>v!==null).map(Number));
@@ -6870,7 +6914,7 @@ function renderAvanteComparison(){
   // v54.5.2: apresenta todas as igrejas. As comparáveis surgem primeiro,
   // ordenadas pela maior variação absoluta; as restantes aparecem no fim,
   // por ordem alfabética, com indicação de ausência de dados comparáveis.
-  const movements=(comp.churches||[]).map(c=>{
+  const movements=avanteComparisonChurches().map(c=>{
     const base=avanteYearValue(c.values,baseYear),current=avanteYearValue(c.values,compareYear),v=avanteVariation(base,current);
     return {...c,base,current,...v};
   }).sort((a,b)=>{
@@ -7351,3 +7395,5 @@ setupSandboxBanner();
   setStatus('bad','Aguardando login','Introduza as credenciais para entrar no sistema');
   showLogin();
 })();
+
+// v54.5.4 — elimina igrejas duplicadas na comparação e no selector de tendência, consolidando registos históricos pelo nome.
