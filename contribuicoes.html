@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Avante Evangelho — Visualização geral</title>
   <meta name="theme-color" content="#064e3b">
-  <link rel="manifest" href="./manifest.webmanifest?v=54.6.1">
-  <link rel="apple-touch-icon" href="./apple-touch-icon.png?v=54.6.1">
-  <link rel="stylesheet" href="styles.css?v=54.6.1">
+  <link rel="manifest" href="./manifest.webmanifest?v=54.6.2">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png?v=54.6.2">
+  <link rel="stylesheet" href="styles.css?v=54.6.2">
   <style>
     body{margin:0;background:radial-gradient(circle at top,#ecfdf5,#f8fafc 38%,#eef2f7);color:#0f172a}
     .public-avante{max-width:1500px;margin:auto;padding:24px}
@@ -175,7 +175,7 @@
     </section>
   </main>
 
-  <script src="config.js?v=54.6.1"></script>
+  <script src="config.js?v=54.6.2"></script>
   <script>
     let payload=null,selected='',timer=null;
     let comparisonBaseYear=null,comparisonYear=null,trendChurchId='';
@@ -405,8 +405,7 @@
       if(isHonorary){
         document.getElementById('note').innerHTML=`<span class="unlock">Regra honorária:</span> qualquer igreja alcança esta distinção quando o total da 1.ª contribuição ou a soma das duas contribuições atinge ${money(payload.metaHonoraria)}. Actualizado às ${time}.`;
       }else{
-        const eligible=churches.filter(church=>church.segundaAberta).length;
-        document.getElementById('note').innerHTML=`<span class="unlock">Regra individual:</span> ${eligible} de ${churches.length} igrejas estão autorizadas a fazer a 2.ª contribuição por terem atingido a respectiva meta na 1.ª contribuição. Actualizado às ${time}.`;
+        document.getElementById('note').textContent=`Actualizado às ${time}.`;
       }
       renderComparison();
     }
