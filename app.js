@@ -5932,7 +5932,7 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.6.0'
+    clientVersion:'54.6.1'
   };
 }
 
@@ -7427,4 +7427,4 @@ setupSandboxBanner();
 
 // v54.5.4 — elimina igrejas duplicadas na comparação e no selector de tendência, consolidando registos históricos pelo nome.
 
-// v54.6.0 — separa o Avante Evangelho em visualização geral pública e área autenticada de lançamento; o formulário só é exibido a perfis com permissão de gestão.
+// v54.6.1 — separa o Avante Evangelho em visualização geral pública e área autenticada de lançamento; o formulário só é exibido a perfis com permissão de gestão.

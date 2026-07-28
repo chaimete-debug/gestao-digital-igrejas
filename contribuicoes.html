@@ -3,34 +3,110 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Avante Evangelho 2026 — Contribuições</title>
-  <meta name="theme-color" content="#064e3b"><link rel="manifest" href="./manifest.webmanifest?v=54.6.0"><link rel="apple-touch-icon" href="./apple-touch-icon.png?v=54.6.0">
-  <link rel="stylesheet" href="styles.css?v=54.6.0">
+  <title>Avante Evangelho — Visualização geral</title>
+  <meta name="theme-color" content="#064e3b">
+  <link rel="manifest" href="./manifest.webmanifest?v=54.6.1">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png?v=54.6.1">
+  <link rel="stylesheet" href="styles.css?v=54.6.1">
   <style>
-    body{margin:0;background:radial-gradient(circle at top,#ecfdf5,#f8fafc 38%,#eef2f7);color:#0f172a}.public-avante{max-width:1500px;margin:auto;padding:24px}.public-hero{display:flex;justify-content:space-between;align-items:center;gap:20px;background:linear-gradient(135deg,#064e3b,#0f766e);color:#fff;border-radius:28px;padding:26px 30px;box-shadow:0 24px 60px rgba(6,78,59,.24);margin-bottom:18px}.public-hero h1{margin:0;font-size:clamp(28px,4vw,52px)}.public-hero p{margin:8px 0 0;color:#d1fae5;font-size:18px}.public-mode-badges{display:grid;gap:9px;justify-items:end}.live-badge,.read-only-badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:11px 15px;border-radius:999px;font-weight:900;white-space:nowrap}.read-only-badge{background:rgba(209,250,229,.16);color:#ecfdf5}.group-tabs{display:flex;gap:9px;overflow:auto;padding:7px 2px 14px}.group-tabs button{border:1px solid #cbd5e1;background:#fff;border-radius:999px;padding:11px 17px;font-weight:900;white-space:nowrap;cursor:pointer}.group-tabs button.active{background:#0f766e;color:#fff;border-color:#0f766e}.group-tabs button.honorary{border-color:#f59e0b}.group-tabs button.honorary.active{background:#92400e;border-color:#92400e}.public-table-card{background:#fff;border-radius:24px;border:1px solid #dbe7e4;overflow:hidden;box-shadow:0 18px 48px rgba(15,23,42,.09)}.public-table{width:100%;border-collapse:collapse;min-width:950px}.public-table th{background:#064e3b;color:#fff;text-align:left;padding:15px}.public-table td{padding:15px;border-bottom:1px solid #e2e8f0;font-size:18px}.public-table tr:last-child td{border-bottom:0}.public-table tr.is-honorary{background:#fffbeb}.church-rank{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#ecfdf5;color:#065f46;font-weight:900;margin-right:10px}.public-progress{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden;min-width:160px}.public-progress i{display:block;height:100%;background:linear-gradient(90deg,#f59e0b,#0f766e)}.public-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;margin:16px 0}.public-kpi{background:#fff;padding:17px;border-radius:18px;border:1px solid #dbe7e4}.public-kpi span{display:block;color:#64748b;font-size:11px;font-weight:900;text-transform:uppercase}.public-kpi strong{display:block;font-size:25px;margin-top:6px}.public-kpi.primary{background:#0f766e}.public-kpi.primary span,.public-kpi.primary strong{color:#fff}.public-note{text-align:center;color:#64748b;margin-top:14px}.unlock{color:#166534;font-weight:900}.lock{color:#9a3412;font-weight:900}.honorary-tag{display:inline-flex;margin-left:8px;padding:4px 8px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:900}.church-group{display:block;color:#64748b;font-size:12px;margin:3px 0 0 42px}.public-error{padding:24px;text-align:center;color:#b91c1c;font-weight:800}
-.public-history-card{background:#fff;border-radius:24px;border:1px solid #dbe7e4;padding:20px;margin:18px 0;box-shadow:0 18px 48px rgba(15,23,42,.07)}
-.public-history-card h2{margin:0;color:#064e3b}.public-history-card p{color:#64748b;margin:6px 0 16px}
-.public-history-bars{display:grid;gap:12px}.public-history-row{display:grid;grid-template-columns:90px minmax(180px,1fr) minmax(150px,210px);gap:14px;align-items:center}
-.public-history-track{height:18px;background:#e2e8f0;border-radius:999px;overflow:hidden}.public-history-track i{display:block;height:100%;background:linear-gradient(90deg,#0f766e,#f59e0b);border-radius:999px}
-.public-history-value{text-align:right;color:#064e3b}.public-history-note{margin-top:14px;padding:12px 14px;border-radius:14px;background:#fffbeb;color:#92400e;font-weight:700}
-@media(max-width:900px){.public-kpis{grid-template-columns:repeat(2,1fr)}.public-hero{display:block}.public-mode-badges{justify-items:start;margin-top:14px}.live-badge,.read-only-badge{display:inline-block}.public-avante{padding:12px}.public-table td{font-size:15px}.public-history-row{grid-template-columns:70px 1fr}.public-history-value{grid-column:2;text-align:left}}
+    body{margin:0;background:radial-gradient(circle at top,#ecfdf5,#f8fafc 38%,#eef2f7);color:#0f172a}
+    .public-avante{max-width:1500px;margin:auto;padding:24px}
+    .public-hero{display:flex;justify-content:space-between;align-items:center;gap:20px;background:linear-gradient(135deg,#064e3b,#0f766e);color:#fff;border-radius:28px;padding:26px 30px;box-shadow:0 24px 60px rgba(6,78,59,.24);margin-bottom:18px}
+    .public-hero h1{margin:0;font-size:clamp(28px,4vw,52px)}
+    .public-hero p{margin:8px 0 0;color:#d1fae5;font-size:18px}
+    .public-mode-badges{display:grid;gap:9px;justify-items:end}
+    .live-badge,.read-only-badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:11px 15px;border-radius:999px;font-weight:900;white-space:nowrap}
+    .read-only-badge{background:rgba(209,250,229,.16);color:#ecfdf5}
+    .group-tabs{display:flex;gap:9px;overflow:auto;padding:7px 2px 14px}
+    .group-tabs button{border:1px solid #cbd5e1;background:#fff;border-radius:999px;padding:11px 17px;font-weight:900;white-space:nowrap;cursor:pointer}
+    .group-tabs button.active{background:#0f766e;color:#fff;border-color:#0f766e}
+    .group-tabs button.honorary{border-color:#f59e0b}
+    .group-tabs button.honorary.active{background:#92400e;border-color:#92400e}
+    .public-table-card,.public-comparison-card{background:#fff;border-radius:24px;border:1px solid #dbe7e4;box-shadow:0 18px 48px rgba(15,23,42,.09)}
+    .public-table-card{overflow:hidden}
+    .public-table{width:100%;border-collapse:collapse;min-width:950px}
+    .public-table th{background:#064e3b;color:#fff;text-align:left;padding:15px}
+    .public-table td{padding:15px;border-bottom:1px solid #e2e8f0;font-size:18px}
+    .public-table tr:last-child td{border-bottom:0}
+    .public-table tr.is-honorary{background:#fffbeb}
+    .church-rank{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#ecfdf5;color:#065f46;font-weight:900;margin-right:10px}
+    .public-progress{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden;min-width:160px}
+    .public-progress i{display:block;height:100%;background:linear-gradient(90deg,#f59e0b,#0f766e)}
+    .public-kpis,.public-comparison-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;margin:16px 0}
+    .public-kpi{background:#fff;padding:17px;border-radius:18px;border:1px solid #dbe7e4}
+    .public-kpi span{display:block;color:#64748b;font-size:11px;font-weight:900;text-transform:uppercase}
+    .public-kpi strong{display:block;font-size:25px;margin-top:6px}
+    .public-kpi.primary{background:#0f766e}
+    .public-kpi.primary span,.public-kpi.primary strong{color:#fff}
+    .public-note{text-align:center;color:#64748b;margin-top:14px}
+    .unlock{color:#166534;font-weight:900}.lock{color:#9a3412;font-weight:900}
+    .honorary-tag{display:inline-flex;margin-left:8px;padding:4px 8px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:900}
+    .church-group{display:block;color:#64748b;font-size:12px;margin:3px 0 0 42px}
+    .public-error{padding:24px;text-align:center;color:#b91c1c;font-weight:800}
+    .public-history-note{margin:14px 0;padding:12px 14px;border-radius:14px;background:#fffbeb;color:#92400e;font-weight:700}
+    .public-comparison-card{padding:22px;margin:20px 0;overflow:hidden}
+    .public-comparison-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+    .public-comparison-head h2{margin:0;color:#064e3b}
+    .public-comparison-head p{color:#64748b;margin:7px 0 0}
+    .public-status{display:inline-flex;padding:6px 10px;border-radius:999px;background:#ccfbf1;color:#115e59;font-size:12px;font-weight:900;white-space:nowrap}
+    .public-comparison-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
+    .public-comparison-controls label{display:grid;gap:7px;font-weight:800}
+    .public-comparison-controls select{width:100%;border:1px solid #cbd5e1;border-radius:14px;padding:12px 13px;background:#fff;color:#0f172a;font:inherit}
+    .public-section-box{margin-top:18px;padding:18px;border:1px solid #dbe7e4;border-radius:18px;background:#f8fafc;min-width:0}
+    .public-section-box h3{margin:0 0 14px;color:#064e3b}
+    .public-history-bars{display:grid;gap:12px}
+    .public-history-row{display:grid;grid-template-columns:minmax(150px,220px) minmax(180px,1fr) minmax(150px,210px);gap:14px;align-items:center}
+    .public-history-label{display:flex;flex-direction:column}
+    .public-history-label small{color:#64748b;margin-top:3px}
+    .public-history-track{height:18px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+    .public-history-track i{display:block;height:100%;background:linear-gradient(90deg,#0f766e,#f59e0b);border-radius:999px}
+    .public-history-track.empty{background:repeating-linear-gradient(135deg,#e2e8f0,#e2e8f0 7px,#f8fafc 7px,#f8fafc 14px)}
+    .public-history-value{text-align:right;color:#064e3b}
+    .public-comparison-tables{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;margin-top:20px}
+    .public-comparison-tables>section{min-width:0}
+    .public-comparison-tables h3{margin:0 0 12px;color:#064e3b}
+    .public-table-scroll{width:100%;max-width:100%;overflow:auto;border:1px solid #dbe7e4;border-radius:18px}
+    .public-comparison-table{width:100%;border-collapse:collapse;min-width:760px;background:#fff}
+    .public-comparison-table th{background:#c9a925;color:#fff;text-align:left;padding:14px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+    .public-comparison-table td{padding:14px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+    .public-comparison-table tr:last-child td{border-bottom:0}
+    .public-comparison-table td.positive{color:#166534;font-weight:800}
+    .public-comparison-table td.negative{color:#b91c1c;font-weight:800}
+    .public-comparison-table td.neutral{color:#64748b}
+    .public-comparison-table td small{display:block;font-size:11px;margin-top:3px}
+    #publicChurchComparisonTable{min-width:800px}
+    @media(max-width:1000px){
+      .public-kpis,.public-comparison-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .public-comparison-controls{grid-template-columns:1fr}
+      .public-hero{display:block}.public-mode-badges{justify-items:start;margin-top:14px}
+    }
+    @media(max-width:720px){
+      .public-avante{padding:12px}.public-table td{font-size:15px}
+      .public-history-row{grid-template-columns:100px 1fr}
+      .public-history-value{grid-column:2;text-align:left}
+      .public-comparison-card{padding:16px}
+      .public-comparison-head{display:block}.public-status{margin-top:12px}
+    }
   </style>
 </head>
 <body>
   <main class="public-avante">
     <header class="public-hero">
-      <div><h1 id="publicTitle">Avante Evangelho 2026</h1><p id="publicSubtitle">Contribuições financeiras das igrejas — Distrito da Matola</p></div>
-      <div class="public-mode-badges"><div class="read-only-badge">🔒 Apenas consulta</div><div class="live-badge">● Actualização em directo</div></div>
+      <div>
+        <h1 id="publicTitle">Avante Evangelho</h1>
+        <p id="publicSubtitle">Contribuições financeiras das igrejas — Distrito da Matola</p>
+      </div>
+      <div class="public-mode-badges">
+        <div class="read-only-badge">🔒 Apenas consulta</div>
+        <div class="live-badge">● Actualização em directo</div>
+      </div>
     </header>
+
     <div class="public-history-note" role="note"><strong>Visualização geral:</strong> esta página não possui formulário de lançamento e utiliza exclusivamente dados públicos de consulta.</div>
+
     <div id="tabs" class="group-tabs"></div>
     <div id="kpis" class="public-kpis"></div>
-    <section class="public-history-card">
-      <h2>Evolução anual</h2>
-      <p>Comparação dos totais distritais de 2024, 2025 e do ano em curso.</p>
-      <div id="publicHistoryBars" class="public-history-bars"></div>
-      <div id="publicHistoryNote" class="public-history-note"></div>
-    </section>
+
     <div class="public-table-card">
       <div class="table-scroll">
         <table class="public-table">
@@ -40,79 +116,301 @@
       </div>
     </div>
     <p id="note" class="public-note">A carregar...</p>
+
+    <section class="public-comparison-card" aria-labelledby="publicComparisonTitle">
+      <div class="public-comparison-head">
+        <div>
+          <h2 id="publicComparisonTitle">Evolução anual e comparação</h2>
+          <p>Consulte a evolução distrital, a comparação por grupo e a comparação de todas as igrejas.</p>
+        </div>
+        <span id="publicComparisonStatus" class="public-status">Histórico</span>
+      </div>
+
+      <div class="public-comparison-controls">
+        <label>Ano base
+          <select id="publicBaseYear"></select>
+        </label>
+        <label>Ano comparado
+          <select id="publicCompareYear"></select>
+        </label>
+        <label>Igreja para tendência
+          <select id="publicTrendChurch"></select>
+        </label>
+      </div>
+
+      <div id="publicComparisonNotice" class="public-history-note"></div>
+      <div id="publicComparisonKpis" class="public-comparison-kpis"></div>
+
+      <div class="public-section-box">
+        <h3>Total distrital por ano</h3>
+        <div id="publicAnnualBars" class="public-history-bars"></div>
+      </div>
+
+      <div class="public-section-box">
+        <h3>Evolução da igreja seleccionada</h3>
+        <div id="publicChurchTrendBars" class="public-history-bars"></div>
+      </div>
+
+      <div class="public-comparison-tables">
+        <section>
+          <h3>Comparação por grupo</h3>
+          <div class="public-table-scroll">
+            <table id="publicGroupComparisonTable" class="public-comparison-table">
+              <thead><tr><th>Grupo</th><th>Ano base</th><th>Ano comparado</th><th>Variação</th><th>Crescimento</th></tr></thead>
+              <tbody><tr><td colspan="5">A carregar...</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <h3>Comparação por igreja — todas as igrejas</h3>
+          <div class="public-table-scroll">
+            <table id="publicChurchComparisonTable" class="public-comparison-table">
+              <thead><tr><th>Igreja</th><th>Grupo</th><th>Ano base</th><th>Ano comparado</th><th>Variação</th></tr></thead>
+              <tbody><tr><td colspan="5">A carregar...</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
   </main>
-  <script src="config.js?v=54.6.0"></script>
+
+  <script src="config.js?v=54.6.1"></script>
   <script>
     let payload=null,selected='',timer=null;
+    let comparisonBaseYear=null,comparisonYear=null,trendChurchId='';
+
     const money=v=>new Intl.NumberFormat('pt-MZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(v||0))+' MT';
     const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+
     function tabsData(){
       const normal=(payload?.groups||[]).map(g=>({...g,isHonorary:false}));
-      return normal.concat([{id:'HONORARIAS',name:'🏅 Igrejas Honorárias',isHonorary:true,churches:payload?.honorarias||[],metaGrupo:(payload?.metaHonoraria||0)*(payload?.honorarias||[]).length,primeiraTotal:(payload?.honorarias||[]).reduce((s,c)=>s+Number(c.primeira||0),0),segundaTotal:(payload?.honorarias||[]).reduce((s,c)=>s+Number(c.segunda||0),0),total:(payload?.honorarias||[]).reduce((s,c)=>s+Number(c.total||0),0)}]);
-    }
-    async function load(){
-      try{
-        const base=window.APP_CONFIG?.APPS_SCRIPT_URL;
-        if(!base) throw Error('URL do backend não configurada.');
-        const u=base+'?'+new URLSearchParams({action:'avantepublicdata'});
-        const r=await fetch(u,{cache:'no-store'}),o=await r.json();
-        if(!o.ok) throw Error(o.message||'Erro ao consultar as contribuições.');
-        payload=o;
-        document.getElementById('publicTitle').textContent=o.title||'Avante Evangelho 2026';
-        document.getElementById('publicSubtitle').textContent=o.subtitle||'Contribuições financeiras das igrejas — Distrito da Matola';
-        const all=tabsData();
-        if(!selected||!all.some(x=>x.id===selected)) selected=all[0]?.id||'';
-        render();
-        clearTimeout(timer); timer=setTimeout(load,Math.max(3,Number(o.refreshSeconds||5))*1000);
-      }catch(e){
-        document.getElementById('rows').innerHTML='<tr><td colspan="7" class="public-error">Não foi possível actualizar: '+esc(e.message)+'</td></tr>';
-        document.getElementById('note').textContent='Nova tentativa em 10 segundos.';
-        clearTimeout(timer); timer=setTimeout(load,10000);
-      }
+      return normal.concat([{
+        id:'HONORARIAS',name:'🏅 Igrejas Honorárias',isHonorary:true,
+        churches:payload?.honorarias||[],
+        metaGrupo:(payload?.metaHonoraria||0)*(payload?.honorarias||[]).length,
+        primeiraTotal:(payload?.honorarias||[]).reduce((s,c)=>s+Number(c.primeira||0),0),
+        segundaTotal:(payload?.honorarias||[]).reduce((s,c)=>s+Number(c.segunda||0),0),
+        total:(payload?.honorarias||[]).reduce((s,c)=>s+Number(c.total||0),0)
+      }]);
     }
 
-    function renderHistory(){
-      const comp=payload?.comparison,el=document.getElementById('publicHistoryBars'),note=document.getElementById('publicHistoryNote');
-      if(!el||!note)return;
+    function churchKey(value){
+      return String(value||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    }
+
+    function comparisonChurches(){
+      const merged=new Map();
+      (payload?.comparison?.churches||[]).forEach((church,index)=>{
+        const name=String(church?.name||church?.id||'').trim();
+        const key=churchKey(name)||`church-${index}`;
+        const incomingValues={...(church?.values||{})};
+        if(!merged.has(key)){
+          merged.set(key,{...church,name,values:incomingValues});
+          return;
+        }
+        const current=merged.get(key);
+        Object.keys(incomingValues).forEach(year=>{
+          const incoming=incomingValues[year];
+          if(incoming===null||incoming===undefined||incoming==='') return;
+          const existing=current.values?.[year];
+          if(existing===null||existing===undefined||existing===''){
+            current.values[year]=incoming;
+            return;
+          }
+          const existingNumber=Number(existing),incomingNumber=Number(incoming);
+          if(Number.isFinite(existingNumber)&&Number.isFinite(incomingNumber)&&existingNumber!==incomingNumber){
+            current.values[year]=Math.abs(incomingNumber)>Math.abs(existingNumber)?incoming:existing;
+          }
+        });
+        if(!current.groupId&&church.groupId) current.groupId=church.groupId;
+        if(!current.groupName&&church.groupName) current.groupName=church.groupName;
+      });
+      return Array.from(merged.values()).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt'));
+    }
+
+    function yearValue(values,year){
+      if(!values) return null;
+      const key=Object.prototype.hasOwnProperty.call(values,year)?year:String(year);
+      if(!Object.prototype.hasOwnProperty.call(values,key)) return null;
+      const value=values[key];
+      return value===null||value===undefined||value===''?null:Number(value);
+    }
+
+    function variation(base,current){
+      if(base===null||base===undefined||current===null||current===undefined) return {comparable:false,delta:null,growthPct:null};
+      const b=Number(base),c=Number(current);
+      return {comparable:true,delta:c-b,growthPct:b!==0?(c-b)/b*100:null};
+    }
+
+    function signedMoney(value){
+      const n=Number(value||0);
+      return `${n>0?'+':''}${money(n)}`;
+    }
+
+    function percent(value){
+      if(value===null||value===undefined||!Number.isFinite(Number(value))) return '—';
+      const n=Number(value);
+      return `${n>0?'+':''}${n.toFixed(1)}%`;
+    }
+
+    function renderComparisonKpis(items){
+      document.getElementById('publicComparisonKpis').innerHTML=items.map((item,index)=>`<div class="public-kpi${index===0?' primary':''}"><span>${esc(item.label)}</span><strong>${item.value}</strong></div>`).join('');
+    }
+
+    function populateComparisonSelectors(){
+      const comp=payload?.comparison;
+      if(!comp) return false;
+      const years=(comp.yearNumbers||[]).map(Number).filter(Number.isFinite).sort((a,b)=>a-b);
+      if(!years.length) return false;
+      const current=Number(comp.currentYear||years[years.length-1]);
+      const previous=years.filter(y=>y<current).slice(-1)[0]||years[0];
+      if(!years.includes(Number(comparisonBaseYear))) comparisonBaseYear=previous;
+      if(!years.includes(Number(comparisonYear))) comparisonYear=current;
+      const options=years.map(y=>`<option value="${y}">${y}${y===current&&comp.provisional?' — em curso':''}</option>`).join('');
+      const baseSel=document.getElementById('publicBaseYear');
+      const compareSel=document.getElementById('publicCompareYear');
+      const churchSel=document.getElementById('publicTrendChurch');
+      baseSel.innerHTML=options;compareSel.innerHTML=options;
+      baseSel.value=String(comparisonBaseYear);compareSel.value=String(comparisonYear);
+      const churches=comparisonChurches();
+      churchSel.innerHTML=churches.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+      if(!churches.some(c=>String(c.id)===String(trendChurchId))) trendChurchId=churches[0]?.id||'';
+      churchSel.value=String(trendChurchId||'');
+      baseSel.onchange=()=>{comparisonBaseYear=Number(baseSel.value);renderComparison();};
+      compareSel.onchange=()=>{comparisonYear=Number(compareSel.value);renderComparison();};
+      churchSel.onchange=()=>{trendChurchId=churchSel.value;renderChurchTrend();};
+      return true;
+    }
+
+    function renderAnnualBars(){
+      const comp=payload?.comparison,el=document.getElementById('publicAnnualBars');
       const rows=comp?.years||[];
-      if(!rows.length){el.innerHTML='<p>Sem histórico disponível.</p>';note.textContent='';return;}
+      if(!rows.length){el.innerHTML='<p>Sem histórico disponível.</p>';return;}
       const max=Math.max(1,...rows.map(x=>Number(x.total||0)));
       el.innerHTML=rows.map(x=>{
         const width=Math.max(3,Number(x.total||0)/max*100);
         const provisional=String(x.status).toUpperCase()==='PROVISORIO';
-        return `<div class="public-history-row"><strong>${x.year}</strong><div class="public-history-track"><i style="width:${width}%"></i></div><strong class="public-history-value">${money(x.total)}${provisional?' · provisório':''}</strong></div>`;
+        return `<div class="public-history-row"><div class="public-history-label"><strong>${x.year}</strong><small>${provisional?'Provisório':'Final'} · ${Number(x.churchesWithData||0)} igrejas com dados</small></div><div class="public-history-track"><i style="width:${width}%"></i></div><strong class="public-history-value">${money(x.total)}</strong></div>`;
       }).join('');
-      const d=comp?.district||{};
-      if(d.comparable){
-        const direction=Number(d.delta||0)>=0?'crescimento':'redução';
-        note.textContent=`Comparação ${d.baseYear} → ${d.currentYear}: ${direction} de ${money(Math.abs(d.delta||0))} (${Math.abs(Number(d.growthPct||0)).toFixed(1)}%). ${comp.note||''}`;
-      }else{
-        note.textContent=comp?.note||'';
+    }
+
+    function renderChurchTrend(){
+      const comp=payload?.comparison,el=document.getElementById('publicChurchTrendBars');
+      const church=comparisonChurches().find(c=>String(c.id)===String(trendChurchId));
+      if(!comp||!church){el.innerHTML='<p>Seleccione uma igreja.</p>';return;}
+      const years=(comp.yearNumbers||[]).map(Number),vals=years.map(y=>yearValue(church.values,y));
+      const numeric=vals.filter(v=>v!==null).map(Number);
+      const max=Math.max(1,...numeric);
+      el.innerHTML=years.map((year,index)=>{
+        const value=vals[index];
+        if(value===null) return `<div class="public-history-row"><div class="public-history-label"><strong>${year}</strong><small>Sem dados</small></div><div class="public-history-track empty"></div><strong class="public-history-value">—</strong></div>`;
+        const width=Math.max(3,Number(value||0)/max*100);
+        const provisional=year===Number(comp.currentYear)&&comp.provisional;
+        return `<div class="public-history-row"><div class="public-history-label"><strong>${year}</strong><small>${provisional?'Provisório':'Total anual'}</small></div><div class="public-history-track"><i style="width:${width}%"></i></div><strong class="public-history-value">${money(value)}</strong></div>`;
+      }).join('');
+    }
+
+    function renderComparison(){
+      const comp=payload?.comparison;
+      if(!comp||!populateComparisonSelectors()){
+        document.getElementById('publicComparisonNotice').textContent='Sem dados históricos disponíveis para comparação.';
+        return;
+      }
+      const baseYear=Number(comparisonBaseYear),compareYear=Number(comparisonYear);
+      const baseSummary=(comp.years||[]).find(x=>Number(x.year)===baseYear);
+      const compareSummary=(comp.years||[]).find(x=>Number(x.year)===compareYear);
+      const districtVariation=variation(baseSummary?.total,compareSummary?.total);
+      renderComparisonKpis([
+        {label:`Total ${baseYear}`,value:baseSummary?money(baseSummary.total):'Sem dados'},
+        {label:`Total ${compareYear}`,value:compareSummary?money(compareSummary.total):'Sem dados'},
+        {label:'Variação absoluta',value:districtVariation.comparable?signedMoney(districtVariation.delta):'—'},
+        {label:'Crescimento',value:districtVariation.comparable?percent(districtVariation.growthPct):'—'},
+        {label:`Cobertura ${compareYear}`,value:compareSummary?`${Number(compareSummary.churchesWithData||0)} igrejas`:'—'}
+      ]);
+      const currentIncluded=compareYear===Number(comp.currentYear)&&comp.provisional;
+      document.getElementById('publicComparisonNotice').textContent=currentIncluded?(comp.note||`${compareYear} permanece provisório.`):`Comparação de totais anuais entre ${baseYear} e ${compareYear}.`;
+      document.getElementById('publicComparisonStatus').textContent=currentIncluded?`${compareYear} · Provisório`:`${baseYear} → ${compareYear}`;
+
+      const groupBody=document.querySelector('#publicGroupComparisonTable tbody');
+      groupBody.innerHTML=(comp.groups||[]).map(group=>{
+        const base=yearValue(group.values,baseYear),current=yearValue(group.values,compareYear),v=variation(base,current);
+        const cls=v.comparable?(v.delta>0?'positive':(v.delta<0?'negative':'neutral')):'neutral';
+        return `<tr><td><strong>${esc(group.name)}</strong></td><td>${base===null?'—':money(base)}</td><td>${current===null?'—':money(current)}</td><td class="${cls}">${v.comparable?signedMoney(v.delta):'—'}</td><td class="${cls}">${v.comparable?percent(v.growthPct):'—'}</td></tr>`;
+      }).join('')||'<tr><td colspan="5">Sem dados por grupo.</td></tr>';
+
+      const movements=comparisonChurches().map(church=>{
+        const base=yearValue(church.values,baseYear),current=yearValue(church.values,compareYear),v=variation(base,current);
+        return {...church,base,current,...v};
+      }).sort((a,b)=>{
+        if(a.comparable!==b.comparable) return a.comparable?-1:1;
+        if(a.comparable&&b.comparable){
+          const byVariation=Math.abs(b.delta)-Math.abs(a.delta);
+          if(byVariation!==0) return byVariation;
+        }
+        return String(a.name||'').localeCompare(String(b.name||''),'pt');
+      });
+      const churchBody=document.querySelector('#publicChurchComparisonTable tbody');
+      churchBody.innerHTML=movements.map(church=>{
+        const cls=!church.comparable?'neutral':(church.delta>0?'positive':(church.delta<0?'negative':'neutral'));
+        const variationText=church.comparable?`${signedMoney(church.delta)}<small>${percent(church.growthPct)}</small>`:'—<small>Sem dados comparáveis</small>';
+        return `<tr><td><strong>${esc(church.name)}</strong></td><td>${esc(church.groupName||church.groupId||'—')}</td><td>${church.base===null?'—':money(church.base)}</td><td>${church.current===null?'—':money(church.current)}</td><td class="${cls}">${variationText}</td></tr>`;
+      }).join('')||'<tr><td colspan="5">Não existem igrejas configuradas para comparação.</td></tr>';
+
+      renderAnnualBars();
+      renderChurchTrend();
+    }
+
+    async function load(){
+      try{
+        const base=window.APP_CONFIG?.APPS_SCRIPT_URL;
+        if(!base) throw Error('URL do backend não configurada.');
+        const url=base+'?'+new URLSearchParams({action:'avantepublicdata'});
+        const response=await fetch(url,{cache:'no-store'});
+        const output=await response.json();
+        if(!output.ok) throw Error(output.message||'Erro ao consultar as contribuições.');
+        payload=output;
+        document.getElementById('publicTitle').textContent=output.title||'Avante Evangelho';
+        document.getElementById('publicSubtitle').textContent=output.subtitle||'Contribuições financeiras das igrejas — Distrito da Matola';
+        const all=tabsData();
+        if(!selected||!all.some(item=>item.id===selected)) selected=all[0]?.id||'';
+        render();
+        clearTimeout(timer);
+        timer=setTimeout(load,Math.max(3,Number(output.refreshSeconds||5))*1000);
+      }catch(error){
+        document.getElementById('rows').innerHTML='<tr><td colspan="7" class="public-error">Não foi possível actualizar: '+esc(error.message)+'</td></tr>';
+        document.getElementById('note').textContent='Nova tentativa em 10 segundos.';
+        document.getElementById('publicComparisonNotice').textContent='Não foi possível carregar a comparação anual.';
+        clearTimeout(timer);
+        timer=setTimeout(load,10000);
       }
     }
 
     function render(){
-      const all=tabsData(),g=all.find(x=>x.id===selected)||all[0]; if(!g)return;
-      renderHistory();
-      document.getElementById('tabs').innerHTML=all.map(x=>`<button class="${x.id===g.id?'active ':''}${x.isHonorary?'honorary':''}" data-id="${esc(x.id)}">${esc(x.name)}</button>`).join('');
-      document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{selected=b.dataset.id;render()});
-      const isHonorary=!!g.isHonorary;
-      const p=g.metaGrupo?g.total/g.metaGrupo*100:0;
+      const all=tabsData(),group=all.find(item=>item.id===selected)||all[0];
+      if(!group) return;
+      document.getElementById('tabs').innerHTML=all.map(item=>`<button class="${item.id===group.id?'active ':''}${item.isHonorary?'honorary':''}" data-id="${esc(item.id)}">${esc(item.name)}</button>`).join('');
+      document.querySelectorAll('#tabs button').forEach(button=>button.onclick=()=>{selected=button.dataset.id;render();});
+      const isHonorary=!!group.isHonorary;
+      const progress=group.metaGrupo?group.total/group.metaGrupo*100:0;
       document.getElementById('metaHeader').textContent=isHonorary?'Meta honorária':'Meta';
-      document.getElementById('kpis').innerHTML=`<div class="public-kpi primary"><span>${isHonorary?'Meta honorária por igreja':'Meta do grupo'}</span><strong>${money(isHonorary?payload.metaHonoraria:g.metaGrupo)}</strong></div><div class="public-kpi"><span>1.ª contribuição</span><strong>${money(g.primeiraTotal)}</strong></div><div class="public-kpi"><span>2.ª contribuição</span><strong>${money(g.segundaTotal)}</strong></div><div class="public-kpi"><span>Total</span><strong>${money(g.total)}</strong></div><div class="public-kpi"><span>${isHonorary?'Igrejas':'Progresso'}</span><strong>${isHonorary?(g.churches||[]).length:p.toFixed(1)+'%'}</strong></div>`;
-      const churches=g.churches||[];
-      document.getElementById('rows').innerHTML=churches.length?churches.map((c,i)=>{
-        const target=isHonorary?payload.metaHonoraria:c.meta,cp=target?Math.min(100,c.total/target*100):0;
-        return `<tr class="${c.honoraria?'is-honorary':''}"><td><span class="church-rank">${i+1}</span></td><td><strong>${esc(c.name)}</strong>${c.honoraria?'<span class="honorary-tag">🏅 Honorária</span>':''}${isHonorary?`<small class="church-group">${esc(c.groupName||c.groupId||'')}</small>`:''}</td><td>${money(target)}</td><td>${money(c.primeira)}</td><td>${money(c.segunda)}</td><td><strong>${money(c.total)}</strong></td><td><div class="public-progress"><i style="width:${cp}%"></i></div><small>${cp.toFixed(1)}%</small></td></tr>`;
+      document.getElementById('kpis').innerHTML=`<div class="public-kpi primary"><span>${isHonorary?'Meta honorária por igreja':'Meta do grupo'}</span><strong>${money(isHonorary?payload.metaHonoraria:group.metaGrupo)}</strong></div><div class="public-kpi"><span>1.ª contribuição</span><strong>${money(group.primeiraTotal)}</strong></div><div class="public-kpi"><span>2.ª contribuição</span><strong>${money(group.segundaTotal)}</strong></div><div class="public-kpi"><span>Total</span><strong>${money(group.total)}</strong></div><div class="public-kpi"><span>${isHonorary?'Igrejas':'Progresso'}</span><strong>${isHonorary?(group.churches||[]).length:progress.toFixed(1)+'%'}</strong></div>`;
+      const churches=group.churches||[];
+      document.getElementById('rows').innerHTML=churches.length?churches.map((church,index)=>{
+        const target=isHonorary?payload.metaHonoraria:church.meta;
+        const churchProgress=target?Math.min(100,church.total/target*100):0;
+        return `<tr class="${church.honoraria?'is-honorary':''}"><td><span class="church-rank">${index+1}</span></td><td><strong>${esc(church.name)}</strong>${church.honoraria?'<span class="honorary-tag">🏅 Honorária</span>':''}${isHonorary?`<small class="church-group">${esc(church.groupName||church.groupId||'')}</small>`:''}</td><td>${money(target)}</td><td>${money(church.primeira)}</td><td>${money(church.segunda)}</td><td><strong>${money(church.total)}</strong></td><td><div class="public-progress"><i style="width:${churchProgress}%"></i></div><small>${churchProgress.toFixed(1)}%</small></td></tr>`;
       }).join(''):'<tr><td colspan="7">Ainda não existem igrejas nesta categoria.</td></tr>';
       const time=payload.updatedAt?new Date(payload.updatedAt).toLocaleTimeString('pt-MZ'):new Date().toLocaleTimeString('pt-MZ');
       if(isHonorary){
         document.getElementById('note').innerHTML=`<span class="unlock">Regra honorária:</span> qualquer igreja alcança esta distinção quando o total da 1.ª contribuição ou a soma das duas contribuições atinge ${money(payload.metaHonoraria)}. Actualizado às ${time}.`;
       }else{
-        const eligible=churches.filter(c=>c.segundaAberta).length;
+        const eligible=churches.filter(church=>church.segundaAberta).length;
         document.getElementById('note').innerHTML=`<span class="unlock">Regra individual:</span> ${eligible} de ${churches.length} igrejas estão autorizadas a fazer a 2.ª contribuição por terem atingido a respectiva meta na 1.ª contribuição. Actualizado às ${time}.`;
       }
+      renderComparison();
     }
+
     load();
   </script>
 </body>
