@@ -6307,7 +6307,7 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.7.2'
+    clientVersion:'54.7.3'
   };
 }
 
@@ -6318,7 +6318,7 @@ async function submitForm(e){
 
   if(!ensureWorkChurchForSubmission()) return;
 
-  // v54.7.2: dá resposta visual imediata no botão que o utilizador acabou de clicar.
+  // v54.7.3: mantém resposta visual imediata e acrescenta timeout para evitar submissões presas indefinidamente.
   // Nas versões anteriores era seleccionado o primeiro botão submit de toda a página
   // (normalmente o botão Entrar do login), deixando o botão visível aparentemente inerte.
   if(btn){ btn.disabled=true; btn.textContent='A validar...'; }
@@ -6352,8 +6352,23 @@ async function submitForm(e){
       resetForm(); loadStats(); loadAppData();
       return;
     }
-    const res=await fetch(url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(payload)});
-    const out=await res.json();
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 45000);
+    let res;
+    try {
+      res = await fetch(url, {
+        method:'POST',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify(payload),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+    const raw = await res.text();
+    let out;
+    try { out = JSON.parse(raw); }
+    catch (_) { throw new Error('O backend devolveu uma resposta inválida. Confirme a implementação /exec do Apps Script.'); }
     if(!out.ok) throw new Error(out.message || 'Erro desconhecido');
     toast('Registo submetido com sucesso.');
     resetForm();
@@ -6361,7 +6376,10 @@ async function submitForm(e){
     loadAppData();
   }catch(err){
     console.error(err);
-    toast('Falha ao submeter: '+err.message, 'error');
+    const message = err?.name === 'AbortError'
+      ? 'O servidor demorou demasiado a responder. A submissão foi interrompida no navegador; tente novamente após confirmar o backend.'
+      : (err?.message || 'Erro desconhecido');
+    toast('Falha ao submeter: '+message, 'error');
   }finally{
     if(btn && btn.isConnected){ btn.disabled=false; btn.textContent='Submeter'; }
   }
@@ -7851,3 +7869,5 @@ setupSandboxBanner();
 // v54.5.4 — elimina igrejas duplicadas na comparação e no selector de tendência, consolidando registos históricos pelo nome.
 
 // v54.7.2 — corrige o botão Submeter do formulário dinâmico: o estado visual e o bloqueio passam a actuar sobre o botão do próprio formulário, com deslocação automática para o primeiro erro de validação.
+
+// v54.7.3 — corrige bloqueio do envio: timeout no frontend e compatibilidade com backend sem lock aninhado.

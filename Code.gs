@@ -1,6 +1,6 @@
 /**
  * Backend Google Apps Script para o sistema de gestão da igreja.
- * v54.7.0 — módulo de Pequenos Grupos integrado no sistema.
+ * v54.7.3 — corrige bloqueio de submissões e mantém Pequenos Grupos integrado no sistema.
  */
 const CONFIG = {
   SHEETS: {
@@ -97,7 +97,7 @@ function doGet(e) {
       const u = validateToken_(e.parameter.token);
       return jsonOutput(getAppData_(u, e.parameter || {}));
     }
-    return jsonOutput({ ok: true, service: 'xlsform-webapp-backend', version: '54.7.0', time: new Date().toISOString() });
+    return jsonOutput({ ok: true, service: 'xlsform-webapp-backend', version: '54.7.3', time: new Date().toISOString() });
   } catch (err) {
     return jsonOutput({ ok: false, message: err.message });
   }
@@ -1497,13 +1497,28 @@ function validMozPhoneV541_(value) {
   return /^(258)?8[2-7]\d{7}$/.test(String(value || '').replace(/[+\s()-]/g, ''));
 }
 
+function ensureSubmissionStorageV5473_(module) {
+  // Não executa setup() durante uma submissão. setup() também prepara o Avante
+  // e pode adquirir ScriptLock; fazê-lo dentro de saveSubmission_ criava um lock
+  // aninhado e podia deixar o pedido parado até ao timeout do Apps Script.
+  ensureSheet_(CONFIG.SHEETS.SUBMISSIONS, ['submittedAt','uuid','module','area','moduleLabel','estado_aprovacao','submetido_por','submetido_por_nome','submetido_por_perfil','igreja_id','igreja_nome','departamento_utilizador','aprovado_por','aprovado_em','createdAt','payloadPreview']);
+  ensureSheet_(CONFIG.SHEETS.RAW, ['createdAt','uuid','module','json']);
+  ensureSheet_(CONFIG.SHEETS.AUDIT, ['createdAt','actor','actorName','action','module','uuid','details']);
+  const target = CONFIG.MODULE_SHEETS[module] || CONFIG.MODULE_SHEETS.sem_modulo;
+  ensureSheet_(target, ['createdAt','submittedAt','uuid','module','area','estado_aprovacao','submetido_por','submetido_por_nome','submetido_por_perfil','igreja_id','igreja_nome','departamento_utilizador','aprovado_por','aprovado_em']);
+}
+
 function saveSubmission_(payload, sessionUser) {
+  const uuid = payload.uuid || Utilities.getUuid();
+  const module = payload.module || 'sem_modulo';
+
+  // v54.7.3: preparar apenas as folhas necessárias ANTES de adquirir o lock.
+  // Isto elimina o deadlock causado por setup() -> ensureAvanteSheets_() -> ScriptLock.
+  ensureSubmissionStorageV5473_(module);
+
   const lock = LockService.getScriptLock();
-  lock.waitLock(30000);
+  lock.waitLock(15000);
   try {
-    setup();
-    const uuid = payload.uuid || Utilities.getUuid();
-    const module = payload.module || 'sem_modulo';
     const area = CONFIG.MODULE_AREA[module] || 'GERAL';
     const data = applyChurchToData_(payload.data || {}, sessionUser);
     const createdAt = new Date();
