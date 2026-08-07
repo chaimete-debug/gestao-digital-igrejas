@@ -6053,7 +6053,10 @@ function collectRepeatValues(){
     const r=el.dataset.repeatName, i=Number(el.dataset.repeatIndex), n=el.dataset.originalName;
     if(!r || !n || !Number.isFinite(i)) return;
     next[r]=next[r]||[];
-    next[r][i]={...(state.repeats?.[r]?.[i]||{})};
+    // Preserve os campos já recolhidos da mesma linha.
+    // Antes, cada controlo recriava a linha a partir de state.repeats e o campo
+    // seguinte (ex.: Categoria) apagava o anterior (ex.: Nome).
+    next[r][i]={...(next[r][i] || state.repeats?.[r]?.[i] || {})};
     next[r][i][n]=el.multiple ? Array.from(el.selectedOptions).map(o=>o.value).join('; ') : el.value;
   });
   Object.keys(state.repeats||{}).forEach(k=>{ if(!next[k]) next[k]=[]; });
@@ -6304,7 +6307,7 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.7.0'
+    clientVersion:'54.7.1'
   };
 }
 
@@ -7819,4 +7822,4 @@ setupSandboxBanner();
 
 // v54.5.4 — elimina igrejas duplicadas na comparação e no selector de tendência, consolidando registos históricos pelo nome.
 
-// v54.7.0 — integra o módulo de Pequenos Grupos; mantém os dois modos do Avante Evangelho em visualização geral pública e área autenticada de lançamento; o formulário só é exibido a perfis com permissão de gestão.
+// v54.7.1 — corrige a recolha dos campos das linhas repetidas (Nome + Categoria) no módulo de Pequenos Grupos; mantém os dois modos do Avante Evangelho em visualização geral pública e área autenticada de lançamento; o formulário só é exibido a perfis com permissão de gestão.
