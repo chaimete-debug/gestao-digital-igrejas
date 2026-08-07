@@ -511,3 +511,12 @@ body.sandbox-mode .primary-btn:hover{background:#115e59;}
 /* v54.7.0 — Pequenos Grupos */
 #pequenosGruposTable td:nth-child(4),#pequenosGruposTable td:nth-child(8){max-width:280px;white-space:normal;}
 @media(max-width:780px){#pequenosGruposTable{min-width:980px;}}
+
+
+/* v54.8.0 — Visitação e Cuidado */
+.visitacao-summary-grid .mini-row{align-items:flex-start}
+.visitacao-summary-grid .mini-row span:first-child{display:grid;gap:2px}
+.visitacao-summary-grid .mini-row small{color:var(--muted);font-size:12px}
+.care-pending,.care-overdue{font-weight:900;font-size:12px;border-radius:999px;padding:5px 9px;white-space:nowrap}
+.care-pending{background:#fef3c7;color:#92400e}
+.care-overdue{background:#fee2e2;color:#991b1b}

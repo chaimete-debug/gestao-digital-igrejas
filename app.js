@@ -2960,7 +2960,7 @@ const XLSFORM_FIELDS = [
   {
     "type": "begin_group",
     "name": "grp_pequenos_grupos",
-    "label": "Relatório de pequenos grupos",
+    "label": "Relatório de Zonas/Pequenos Grupos",
     "hint": "",
     "required": "false",
     "calculation": "",
@@ -2975,8 +2975,8 @@ const XLSFORM_FIELDS = [
   {
     "type": "note",
     "name": "pg_intro",
-    "label": "PEQUENOS GRUPOS",
-    "hint": "Registe os dados do encontro do pequeno grupo.",
+    "label": "ZONAS / PEQUENOS GRUPOS",
+    "hint": "Registe os dados do encontro da Zona/Pequeno Grupo.",
     "required": "false",
     "calculation": "",
     "appearance": "",
@@ -3286,6 +3286,441 @@ const XLSFORM_FIELDS = [
     "parameters": "",
     "choice_filter": "",
     "default": ""
+  },
+  {
+    "type": "begin_group",
+    "name": "grp_visitacao_cuidado",
+    "label": "Visitação e Cuidado",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "field-list",
+    "relevant": "${menu_preencher} = 'visitacao_cuidado'",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "note",
+    "name": "vis_intro",
+    "label": "VISITAÇÃO E CUIDADO",
+    "hint": "Registe visitas fraternais, pastorais e acompanhamentos. Evite incluir diagnósticos médicos, conflitos familiares detalhados ou informação íntima desnecessária.",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one tipo_registo_visita",
+    "name": "vis_registo_tipo",
+    "label": "O que deseja registar?",
+    "hint": "Seleccione Nova visita ou Acompanhamento de uma visita anterior.",
+    "required": "true",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": "visita"
+  },
+  {
+    "type": "date",
+    "name": "vis_data",
+    "label": "Data da visita",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one tipo_visitacao",
+    "name": "vis_tipo_visitacao",
+    "label": "Tipo de visita",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one alvo_visita",
+    "name": "vis_alvo_tipo",
+    "label": "Quem foi visitado?",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": "membro"
+  },
+  {
+    "type": "select_one_from_file membros.csv",
+    "name": "vis_pessoa_membro",
+    "label": "Membro visitado",
+    "hint": "Seleccione na lista nominal da igreja.",
+    "required": "${vis_alvo_tipo} = 'membro'",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "${vis_alvo_tipo} = 'membro'",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "value=name label=label",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "text",
+    "name": "vis_visitado_nome_manual",
+    "label": "Pessoa/Família visitada",
+    "hint": "Indique apenas o nome necessário para identificar a pessoa ou família.",
+    "required": "${vis_alvo_tipo} != 'membro'",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "${vis_alvo_tipo} != 'membro'",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "text",
+    "name": "vis_zona_grupo",
+    "label": "Zona/Pequeno Grupo",
+    "hint": "Indique a Zona ou o Pequeno Grupo a que o visitado pertence, quando aplicável.",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one local_visita",
+    "name": "vis_local_tipo",
+    "label": "Local da visita",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "text",
+    "name": "vis_local_detalhe",
+    "label": "Referência do local",
+    "hint": "Ex.: bairro, hospital ou outra referência geral. Não é necessário registar endereço exacto.",
+    "required": "${vis_local_tipo} = 'outro'",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one motivo_visita",
+    "name": "vis_motivo",
+    "label": "Motivo principal",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "text",
+    "name": "vis_motivo_outro",
+    "label": "Especifique o motivo",
+    "hint": "",
+    "required": "${vis_motivo} = 'outro'",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "${vis_motivo} = 'outro'",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "begin_repeat",
+    "name": "vis_equipa_visitante",
+    "label": "Quem realizou a visita",
+    "hint": "Adicione uma linha por pessoa que participou na visita.",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one_from_file membros.csv",
+    "name": "vis_visitante_membro",
+    "label": "Membro da equipa",
+    "hint": "Seleccione na lista, se constar.",
+    "required": "false",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "value=name label=label",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "text",
+    "name": "vis_visitante_nome_manual",
+    "label": "Nome manual",
+    "hint": "Preencha apenas quando a pessoa não constar da lista.",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "end_repeat",
+    "name": "",
+    "label": "",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one necessidade_visita",
+    "name": "vis_necessidade_categoria",
+    "label": "Necessidade identificada",
+    "hint": "Use apenas uma categoria geral; evite detalhes íntimos.",
+    "required": "true",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": "nenhuma"
+  },
+  {
+    "type": "text",
+    "name": "vis_necessidade_outro",
+    "label": "Outra necessidade — descrição breve",
+    "hint": "Registe apenas o estritamente necessário.",
+    "required": "${vis_necessidade_categoria} = 'outra'",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "${vis_necessidade_categoria} = 'outra'",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one sim_nao",
+    "name": "vis_houve_oracao",
+    "label": "Houve oração?",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one sim_nao",
+    "name": "vis_apoio_material",
+    "label": "Houve apoio material?",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "text",
+    "name": "vis_apoio_material_desc",
+    "label": "Descrição breve do apoio",
+    "hint": "Não indique valores ou detalhes desnecessários se não forem relevantes.",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "${vis_apoio_material} = 'sim'",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one sim_nao",
+    "name": "vis_necessita_acompanhamento",
+    "label": "Necessita acompanhamento?",
+    "hint": "",
+    "required": "${vis_registo_tipo} = 'visita'",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "${vis_registo_tipo} = 'visita'",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one resultado_acompanhamento",
+    "name": "vis_resultado_acompanhamento",
+    "label": "Resultado do acompanhamento",
+    "hint": "",
+    "required": "${vis_registo_tipo} = 'acompanhamento'",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "${vis_registo_tipo} = 'acompanhamento'",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one_from_file membros.csv",
+    "name": "vis_responsavel_acompanhamento_membro",
+    "label": "Responsável pelo acompanhamento",
+    "hint": "Seleccione na lista quando aplicável.",
+    "required": "false",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "(${vis_registo_tipo} = 'visita' and ${vis_necessita_acompanhamento} = 'sim') or (${vis_registo_tipo} = 'acompanhamento' and ${vis_resultado_acompanhamento} = 'continua')",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "value=name label=label",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "text",
+    "name": "vis_responsavel_acompanhamento_manual",
+    "label": "Responsável — nome manual",
+    "hint": "Use apenas se o responsável não constar da lista.",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "(${vis_registo_tipo} = 'visita' and ${vis_necessita_acompanhamento} = 'sim') or (${vis_registo_tipo} = 'acompanhamento' and ${vis_resultado_acompanhamento} = 'continua')",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "date",
+    "name": "vis_data_prevista",
+    "label": "Data prevista para acompanhamento",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "(${vis_registo_tipo} = 'visita' and ${vis_necessita_acompanhamento} = 'sim') or (${vis_registo_tipo} = 'acompanhamento' and ${vis_resultado_acompanhamento} = 'continua')",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "text",
+    "name": "vis_observacoes",
+    "label": "Observações",
+    "hint": "Registe apenas informação objectiva e necessária ao acompanhamento. Não inclua diagnósticos médicos ou detalhes íntimos.",
+    "required": "false",
+    "calculation": "",
+    "appearance": "long-text",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "end_group",
+    "name": "",
+    "label": "",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
   }
 ];
 
@@ -3317,10 +3752,63 @@ const CHOICES = {
     },
     {
       "name": "pequenos_grupos",
-      "label": "Relatório de pequenos grupos",
+      "label": "Relatório de Zonas/Pequenos Grupos",
       "order": "5",
       "tipo": ""
+    },
+    {
+      "name": "visitacao_cuidado",
+      "label": "Visitação e Cuidado",
+      "order": "6",
+      "tipo": ""
     }
+  ],
+  "tipo_registo_visita": [
+    {"name":"visita","label":"Nova visita","order":"1","tipo":""},
+    {"name":"acompanhamento","label":"Acompanhamento de visita anterior","order":"2","tipo":""}
+  ],
+  "tipo_visitacao": [
+    {"name":"fraternal","label":"Visita fraternal entre membros","order":"1","tipo":""},
+    {"name":"pastoral","label":"Visita pastoral","order":"2","tipo":""},
+    {"name":"zona_grupo","label":"Visita da Zona/Pequeno Grupo","order":"3","tipo":""},
+    {"name":"ministerio","label":"Visita de Ministério/Departamento","order":"4","tipo":""},
+    {"name":"acompanhamento","label":"Acompanhamento","order":"5","tipo":""}
+  ],
+  "alvo_visita": [
+    {"name":"membro","label":"Membro da igreja","order":"1","tipo":""},
+    {"name":"familia","label":"Família","order":"2","tipo":""},
+    {"name":"outro","label":"Outra pessoa","order":"3","tipo":""}
+  ],
+  "local_visita": [
+    {"name":"residencia","label":"Residência","order":"1","tipo":""},
+    {"name":"hospital","label":"Hospital/Unidade sanitária","order":"2","tipo":""},
+    {"name":"igreja","label":"Igreja","order":"3","tipo":""},
+    {"name":"outro","label":"Outro local","order":"4","tipo":""}
+  ],
+  "motivo_visita": [
+    {"name":"comunhao","label":"Comunhão / visita fraternal","order":"1","tipo":""},
+    {"name":"ausencia_cultos","label":"Membro ausente dos cultos","order":"2","tipo":""},
+    {"name":"doenca","label":"Doença / recuperação","order":"3","tipo":""},
+    {"name":"luto","label":"Luto","order":"4","tipo":""},
+    {"name":"novo_membro","label":"Novo membro","order":"5","tipo":""},
+    {"name":"novo_convertido","label":"Novo convertido","order":"6","tipo":""},
+    {"name":"idoso","label":"Acompanhamento de idoso","order":"7","tipo":""},
+    {"name":"familia","label":"Acompanhamento familiar","order":"8","tipo":""},
+    {"name":"oracao","label":"Oração","order":"9","tipo":""},
+    {"name":"outro","label":"Outro","order":"10","tipo":""}
+  ],
+  "necessidade_visita": [
+    {"name":"nenhuma","label":"Nenhuma necessidade identificada","order":"1","tipo":""},
+    {"name":"espiritual","label":"Acompanhamento espiritual","order":"2","tipo":""},
+    {"name":"integracao","label":"Integração / comunhão","order":"3","tipo":""},
+    {"name":"social_material","label":"Apoio social/material","order":"4","tipo":""},
+    {"name":"saude","label":"Saúde (categoria geral)","order":"5","tipo":""},
+    {"name":"familiar","label":"Acompanhamento familiar (categoria geral)","order":"6","tipo":""},
+    {"name":"outra","label":"Outra necessidade","order":"7","tipo":""}
+  ],
+  "resultado_acompanhamento": [
+    {"name":"concluido","label":"Acompanhamento concluído / caso encerrado","order":"1","tipo":""},
+    {"name":"continua","label":"Continua a necessitar acompanhamento","order":"2","tipo":""}
   ],
   "categoria_participante_pg": [
     {"name":"membro_nao_registado","label":"Membro não registado","order":"1","tipo":""},
@@ -4320,7 +4808,7 @@ function addSandboxSubmission(payload){
 
 function sandboxStats(){
   const rows = sandboxRecent();
-  const stats = { plano_cultos_escalas: 2, relatorio_cultos: 2, visitantes: 3, registo_financeiro: 3, pequenos_grupos: 2 };
+  const stats = { plano_cultos_escalas: 2, relatorio_cultos: 2, visitantes: 3, registo_financeiro: 3, pequenos_grupos: 2, visitacao_cuidado: 3 };
   rows.forEach(r => { if(stats[r.module] !== undefined) stats[r.module] += 1; });
   return { stats, recent: rows };
 }
@@ -4376,6 +4864,14 @@ function sandboxAppData(){
     pequenosGrupos: [
       {data:'2026-05-06',hora:'18:00',grupo:'Grupo Esperança',local:'Casa da Família M.',membrosPresentes:12,novosParticipantes:2,ofertas:850,observacoes:'Encontro realizado normalmente.'},
       {data:'2026-05-13',hora:'18:00',grupo:'Grupo Esperança',local:'Casa da Família M.',membrosPresentes:15,novosParticipantes:1,ofertas:1200,observacoes:''}
+    ],
+    visitacao: [
+      {data:'2026-05-06',registoTipo:'visita',visitado:'Família Demo',pessoaId:'',tipo:'fraternal',tipoLabel:'Visita fraternal entre membros',motivo:'comunhao',motivoLabel:'Comunhão / visita fraternal',zonaGrupo:'Zona 1',local:'Residência',oracao:'sim',acompanhamentoEstado:'ENCERRADO',responsavel:'',dataPrevista:'',observacoes:''},
+      {data:'2026-05-12',registoTipo:'visita',visitado:'Ana Demo',pessoaId:'demo_ana',tipo:'pastoral',tipoLabel:'Visita pastoral',motivo:'doenca',motivoLabel:'Doença / recuperação',zonaGrupo:'Zona 2',local:'Residência',oracao:'sim',acompanhamentoEstado:'PENDENTE',responsavel:'Secretário Demo',dataPrevista:'2026-05-20',observacoes:''}
+    ],
+    visitacaoMembrosSem90: [
+      {id:'demo_carlos',nome:'Carlos Demo',grupo:'Zona 3'},
+      {id:'demo_marta',nome:'Marta Demo',grupo:'Zona 1'}
     ],
     dizimos: [
       {data:'2026-05-03', nome:'Membro Demo 1', modo:'Membro registado', valorOrig:'2500', moeda:'MZN', valorMzn:2500, metodo:'M-Pesa', recibo:'REC-001'},
@@ -4556,7 +5052,8 @@ const MODULE_AREA = {
   relatorio_cultos: 'CULTOS',
   pequenos_grupos: 'CULTOS',
   registo_financeiro: 'FINANCAS',
-  visitantes: 'MEMBROS'
+  visitantes: 'MEMBROS',
+  visitacao_cuidado: 'MEMBROS'
 };
 
 function arr(value){
@@ -4949,7 +5446,7 @@ function userCanApprove(){
   return arr(u.approveAreas).length > 0 || String(u.role || '').toUpperCase().includes('ADMIN');
 }
 
-// v54.7.4 — numa igreja local, a área de aprovações só é necessária ao Tesoureiro,
+// v54.8.0 — numa igreja local, a área de aprovações só é necessária ao Tesoureiro,
 // porque os lançamentos financeiros feitos por Líderes ficam PENDENTES para decisão.
 // Secretário, Pastor e perfis de leitura não precisam deste menu no fluxo local.
 // Em âmbito distrital/administrativo, mantém-se a área de Aprovações conforme permissões.
@@ -4962,8 +5459,18 @@ function shouldShowApprovalsNav(){
 }
 
 function userCanSubmitModule(module){
+  const u = currentUser();
+  const allowed = arr(u.allowedModules);
+  if(allowed.includes(module)) return true;
   const area = MODULE_AREA[module];
   return !!area && userCanSubmitArea(area);
+}
+
+function userCanViewVisitacao(){
+  const u=currentUser();
+  const role=String(u.role||u.perfil||'').trim().toUpperCase();
+  if(role.includes('ADMIN')) return true;
+  return ['PASTOR','SECRETARIO','SECRETÁRIO','SUPERINTENDENTE'].includes(role);
 }
 
 function firstVisibleNav(){
@@ -4991,7 +5498,7 @@ function openView(viewId){
   if(viewId === 'avanteView') loadAvanteModule();
   if(viewId === 'approvalView') loadApprovals();
   if(viewId === 'helpView' && userCanManageSystemConfig()) loadUsersAdmin();
-  if(['overviewView','escalasView','cultosView','visitantesView','dizimosView'].includes(viewId)) loadAppData();
+  if(['overviewView','escalasView','cultosView','pequenosGruposView','visitacaoView','visitantesView','dizimosView'].includes(viewId)) loadAppData();
 }
 
 function applyPermissionsToUi(){
@@ -5008,7 +5515,8 @@ function applyPermissionsToUi(){
       const district = !!u.isDistrict || churchScope === '*' || churchScope === 'TODAS' || churchScope === 'TODAS AS IGREJAS' || accessLevel === 'DISTRITAL' || role === 'ADMIN_IT' || role.includes('DISTRITAL');
       visible = visible && district;
     }
-    if(view === 'formView') visible = arr(u.submitAreas).length > 0;
+    if(view === 'formView') visible = arr(u.submitAreas).length > 0 || arr(u.allowedModules).length > 0;
+    if(view === 'visitacaoView') visible = visible && userCanViewVisitacao();
     if(view === 'approvalView') visible = shouldShowApprovalsNav();
     if(view === 'helpView') visible = true;
     btn.classList.toggle('hidden', !visible);
@@ -6209,6 +6717,27 @@ function validateCrossFieldRules(){
     }
   }
 
+  if(module==='visitacao_cuidado'){
+    const team=(state.repeats.vis_equipa_visitante||[]).filter(Boolean);
+    const teamValid=team.filter(r=>String(r.vis_visitante_membro||'').trim() || String(r.vis_visitante_nome_manual||'').trim());
+    if(!team.length || teamValid.length!==team.length){
+      markError(document.querySelector('[data-repeat="vis_equipa_visitante"]'),'Adicione pelo menos uma pessoa que realizou a visita e identifique cada linha.');
+      ok=false;
+    }
+    const needsFollow = getVal('vis_registo_tipo')==='visita' && getVal('vis_necessita_acompanhamento')==='sim';
+    const continues = getVal('vis_registo_tipo')==='acompanhamento' && getVal('vis_resultado_acompanhamento')==='continua';
+    if(needsFollow || continues){
+      if(!String(getVal('vis_responsavel_acompanhamento_membro')||'').trim() && !String(getVal('vis_responsavel_acompanhamento_manual')||'').trim()){
+        markError(visibleInputByField('vis_responsavel_acompanhamento_manual'),'Indique o responsável pelo acompanhamento.');
+        ok=false;
+      }
+      if(!String(getVal('vis_data_prevista')||'').trim()){
+        markError(visibleInputByField('vis_data_prevista'),'Indique a data prevista para o acompanhamento.');
+        ok=false;
+      }
+    }
+  }
+
   if(module==='registo_financeiro'){
     const isTithe=getVal('tipo')==='Entrada' && getVal('rubrica')==='DIZ';
     if(getVal('moeda')!=='MZN'){
@@ -6319,7 +6848,7 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.7.4'
+    clientVersion:'54.8.0'
   };
 }
 
@@ -6330,7 +6859,7 @@ async function submitForm(e){
 
   if(!ensureWorkChurchForSubmission()) return;
 
-  // v54.7.4: mantém resposta visual imediata e acrescenta timeout para evitar submissões presas indefinidamente.
+  // v54.8.0: mantém resposta visual imediata e acrescenta timeout para evitar submissões presas indefinidamente.
   // Nas versões anteriores era seleccionado o primeiro botão submit de toda a página
   // (normalmente o botão Entrar do login), deixando o botão visível aparentemente inerte.
   if(btn){ btn.disabled=true; btn.textContent='A validar...'; }
@@ -6923,6 +7452,7 @@ async function loadAppData(){
     renderEscalas(out.escalas || []);
     renderCultos(out.cultos || []);
     renderPequenosGrupos(out.pequenosGrupos || []);
+    renderVisitacao(out.visitacao || [], out.visitacaoMembrosSem90 || []);
     renderVisitantes(out.visitantes || []);
     renderDizimos(out.dizimos || []);
     return;
@@ -6940,6 +7470,7 @@ async function loadAppData(){
     renderEscalas(out.escalas || []);
     renderCultos(out.cultos || []);
     renderPequenosGrupos(out.pequenosGrupos || []);
+    renderVisitacao(out.visitacao || [], out.visitacaoMembrosSem90 || []);
     renderVisitantes(out.visitantes || []);
     renderDizimos(out.dizimos || []);
   }catch(e){
@@ -7008,6 +7539,47 @@ function renderPequenosGrupos(rows){
   ]);
   const tbody=$('#pequenosGruposTable tbody'); if(!tbody) return;
   tbody.innerHTML=filtered.map(r=>`<tr><td>${cleanHtml(r.data||'')}</td><td>${cleanHtml(r.hora||'')}</td><td><strong>${cleanHtml(r.grupo||'')}</strong></td><td>${cleanHtml(r.local||'')}</td><td>${numberValue(r.membrosPresentes)}</td><td>${numberValue(r.novosParticipantes)}</td><td>${money(r.ofertas)}</td><td>${cleanHtml(r.observacoes||'')}</td></tr>`).join('') || '<tr><td colspan="8">Sem encontros registados para o período</td></tr>';
+}
+
+function visitacaoIsOverdue(row){
+  if(String(row.acompanhamentoEstado||'').toUpperCase()!=='PENDENTE' || !row.dataPrevista) return false;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const d=new Date(String(row.dataPrevista).slice(0,10)+'T00:00:00');
+  return !Number.isNaN(d.getTime()) && d<today;
+}
+function renderVisitacao(rows,membrosSem90){
+  const mes=$('#visitacaoMes')?.value||'', estado=$('#visitacaoEstado')?.value||'', tipo=$('#visitacaoTipo')?.value||'';
+  if($('#visitacaoMes') && !$('#visitacaoMes').dataset.ready){
+    $('#visitacaoMes').addEventListener('change',()=>renderVisitacao(state.appData?.visitacao||[],state.appData?.visitacaoMembrosSem90||[]));
+    $('#visitacaoEstado')?.addEventListener('change',()=>renderVisitacao(state.appData?.visitacao||[],state.appData?.visitacaoMembrosSem90||[]));
+    $('#visitacaoTipo')?.addEventListener('change',()=>renderVisitacao(state.appData?.visitacao||[],state.appData?.visitacaoMembrosSem90||[]));
+    $('#visitacaoMes').dataset.ready='1';
+  }
+  const all=rows||[];
+  const monthRows=all.filter(r=>monthMatches(r.data,mes));
+  const uniqueVisited=new Set(monthRows.map(r=>String(r.targetKey||r.visitado||'').trim()).filter(Boolean));
+  const latestByTarget=new Map();
+  [...all].sort((a,b)=>String(b.data||'').localeCompare(String(a.data||''))).forEach(r=>{const k=String(r.targetKey||r.visitado||'').trim();if(k&&!latestByTarget.has(k))latestByTarget.set(k,r);});
+  const latest=[...latestByTarget.values()];
+  const pendentes=latest.filter(r=>String(r.acompanhamentoEstado||'').toUpperCase()==='PENDENTE');
+  const atrasados=pendentes.filter(visitacaoIsOverdue);
+  renderKpis('visitacaoKpis',[
+    {label:'Visitas no período',value:monthRows.length},
+    {label:'Pessoas/Famílias visitadas',value:uniqueVisited.size},
+    {label:'Acompanhamentos pendentes',value:pendentes.length},
+    {label:'Acompanhamentos em atraso',value:atrasados.length}
+  ]);
+  const pend=$('#visitacaoPendentes');
+  if(pend) pend.innerHTML=pendentes.slice(0,12).map(r=>`<div class="mini-row"><span><b>${cleanHtml(r.visitado||'')}</b><small>${cleanHtml(r.responsavel||'Sem responsável')} · ${cleanHtml(r.dataPrevista||'Sem data')}</small></span><span class="${visitacaoIsOverdue(r)?'care-overdue':'care-pending'}">${visitacaoIsOverdue(r)?'Atrasado':'Pendente'}</span></div>`).join('')||'<div class="legacy-empty">Sem acompanhamentos pendentes</div>';
+  const sem=$('#visitacaoSem90');
+  if(sem) sem.innerHTML=(membrosSem90||[]).slice(0,20).map(m=>`<div class="mini-row"><span>${cleanHtml(m.nome||'')}</span><small>${cleanHtml(m.grupo||'')}</small></div>`).join('')||'<div class="legacy-empty">Nenhum membro identificado nesta condição.</div>';
+  const filtered=monthRows.filter(r=>!tipo||r.tipo===tipo).filter(r=>{
+    if(!estado) return true;
+    if(estado==='ATRASADO') return visitacaoIsOverdue(r);
+    return String(r.acompanhamentoEstado||'').toUpperCase()===estado;
+  });
+  const tbody=$('#visitacaoTable tbody'); if(!tbody) return;
+  tbody.innerHTML=filtered.map(r=>`<tr><td>${cleanHtml(r.data||'')}</td><td><strong>${cleanHtml(r.visitado||'')}</strong></td><td>${cleanHtml(r.tipoLabel||r.tipo||'')}</td><td>${cleanHtml(r.motivoLabel||r.motivo||'')}</td><td>${cleanHtml(r.zonaGrupo||'')}</td><td>${cleanHtml(r.local||'')}</td><td>${cleanHtml(r.oracao||'')}</td><td><span class="pill">${cleanHtml(r.acompanhamentoEstado||'')}</span></td><td>${cleanHtml(r.responsavel||'')}</td><td>${cleanHtml(r.dataPrevista||'')}</td></tr>`).join('')||'<tr><td colspan="10">Sem visitas para os filtros seleccionados</td></tr>';
 }
 
 function renderVisitantes(rows){
@@ -7882,4 +8454,4 @@ setupSandboxBanner();
 
 // v54.7.2 — corrige o botão Submeter do formulário dinâmico: o estado visual e o bloqueio passam a actuar sobre o botão do próprio formulário, com deslocação automática para o primeiro erro de validação.
 
-// v54.7.4 — corrige bloqueio do envio: timeout no frontend e compatibilidade com backend sem lock aninhado.
+// v54.8.0 — corrige bloqueio do envio: timeout no frontend e compatibilidade com backend sem lock aninhado.
