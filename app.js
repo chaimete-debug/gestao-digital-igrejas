@@ -2798,7 +2798,7 @@ const XLSFORM_FIELDS = [
     "label": "Cidade",
     "hint": "",
     "required": "false",
-    "calculation": "pulldata('membros', 'cnameade', 'bname', ${membro})",
+    "calculation": "pulldata('membros', 'cidade', 'name', ${membro})",
     "appearance": "",
     "relevant": "(${registo_tipo} = 'membro_efectivo') and ((${Confirmou_o_nome_que_escreveu} = 'sim__continuar') or (${encontrou} = 'sim'))",
     "constraint": "",
@@ -6330,16 +6330,38 @@ function updateDerived(){
   refreshDynamicText();
 }
 
-function applyPulldataToVisibleInputs(){
+function applyPulldataToVisibleInputs({force=false, sourceField=''}={}){
   XLSFORM_FIELDS.forEach(f=>{
     if(!f.calculation || REPEAT_CALCULATED_FIELDS.has(f.name)) return;
     const pd = f.calculation.match(/pulldata\('membros',\s*'([^']+)'\s*,\s*'name'\s*,\s*\$\{([^}]+)\}\)/);
     if(!pd) return;
-    const val = memberField(getVal(pd[2]), pd[1]);
-    setVal(f.name, val);
+
+    const sourceName = pd[2];
+    if(sourceField && sourceName !== sourceField) return;
+
+    const val = memberField(getVal(sourceName), pd[1]);
+    const current = getVal(f.name);
     const el = document.querySelector(`[name="${CSS.escape(f.name)}"]`);
+
+    // pulldata é usado aqui como PREFILL. Depois de preencher, o utilizador
+    // deve poder corrigir/actualizar o valor manualmente sem o formulário
+    // voltar a repor o dado antigo a cada tecla.
+    if(!force && String(current ?? '').trim() !== '') return;
+
+    setVal(f.name, val);
     if(el) el.value = val;
   });
+}
+
+function refreshPulldataForChangedField(fieldName){
+  const changed = String(fieldName || '');
+  if(!changed) return;
+  const hasDependents = XLSFORM_FIELDS.some(f=>{
+    if(!f.calculation || REPEAT_CALCULATED_FIELDS.has(f.name)) return false;
+    const pd = f.calculation.match(/pulldata\('membros',\s*'([^']+)'\s*,\s*'name'\s*,\s*\$\{([^}]+)\}\)/);
+    return !!(pd && pd[2] === changed);
+  });
+  if(hasDependents) applyPulldataToVisibleInputs({force:true, sourceField:changed});
 }
 
 function buildTree(){
@@ -6606,10 +6628,15 @@ function onInput(e){
     if(!el) return;
   }
   if(!el.name) return;
-  if(el.dataset.repeatName){ collectRepeatValues(); updateDerived(); refreshChoiceFilters(); applyPulldataToVisibleInputs(); refreshVisibility(); updateProgress(); return; }
+  if(el.dataset.repeatName){ collectRepeatValues(); updateDerived(); refreshChoiceFilters(); refreshVisibility(); updateProgress(); return; }
   const val = el.multiple ? Array.from(el.selectedOptions).map(o=>o.value) : el.value;
-  setVal(el.dataset.originalName || el.name, Array.isArray(val)?val.join('; '):val);
-  updateDerived(); refreshChoiceFilters(); applyPulldataToVisibleInputs(); refreshVisibility(); updateProgress();
+  const changedField = el.dataset.originalName || el.name;
+  setVal(changedField, Array.isArray(val)?val.join('; '):val);
+  updateDerived();
+  refreshChoiceFilters();
+  refreshPulldataForChangedField(changedField);
+  refreshVisibility();
+  updateProgress();
 }
 function collectMainValues(){
   $$('#dynamicForm input,#dynamicForm select,#dynamicForm textarea').forEach(el=>{
@@ -8511,5 +8538,5 @@ setupSandboxBanner();
 
 // v54.8.0 — corrige bloqueio do envio: timeout no frontend e compatibilidade com backend sem lock aninhado.
 
-// v54.8.4 — alteração de apresentação: o selector "O que deseja preencher?" fica no topo
+// v54.8.5 — alteração de apresentação: o selector "O que deseja preencher?" fica no topo
 // e cada módulo é apresentado abaixo em largura total. A lógica de submissão não foi alterada.
