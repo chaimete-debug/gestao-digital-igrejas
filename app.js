@@ -4935,6 +4935,53 @@ const WORK_CHURCH_KEY = 'igreja_work_church_v1';
 
 
 let deferredInstallPrompt = null;
+const ENTRY_GATE_SESSION_KEY = 'igreja_entry_open_v1';
+
+function shouldShowEntryGate(){
+  if(isInstalledAppMode()) return false;
+  return sessionStorage.getItem(ENTRY_GATE_SESSION_KEY) !== '1';
+}
+
+function setEntryInstallHint(message){
+  const hint = $('#entryInstallHint');
+  if(hint) hint.textContent = message || '';
+}
+
+function updateEntryGateUi(){
+  const gate = $('#entryGate');
+  const installBtn = $('#entryInstallBtn');
+  const openBtn = $('#entryOpenBtn');
+  if(!gate) return;
+
+  gate.classList.toggle('hidden', !shouldShowEntryGate());
+  document.body.classList.toggle('entry-gate-active', shouldShowEntryGate());
+
+  if(openBtn) openBtn.disabled = false;
+  if(!installBtn) return;
+
+  if(isInstalledAppMode()){
+    installBtn.textContent = 'Aplicação instalada';
+    installBtn.disabled = true;
+    setEntryInstallHint('A aplicação já está instalada neste dispositivo.');
+    return;
+  }
+
+  installBtn.disabled = false;
+  installBtn.textContent = 'Instalar aplicação';
+  if(deferredInstallPrompt){
+    setEntryInstallHint('Toque em Instalar aplicação ou, se preferir, abra no navegador.');
+  }else if(isAppleMobileDevice()){
+    setEntryInstallHint('Pode abrir agora. Para instalar no iPhone/iPad, use a opção de adicionar ao ecrã principal do Safari.');
+  }else{
+    setEntryInstallHint('Pode instalar quando o navegador disponibilizar a instalação ou abrir directamente.');
+  }
+}
+
+function openEntryApp(){
+  sessionStorage.setItem(ENTRY_GATE_SESSION_KEY, '1');
+  updateEntryGateUi();
+  setTimeout(() => $('#loginUsername')?.focus(), 50);
+}
 
 function isInstalledAppMode(){
   return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -4963,6 +5010,7 @@ function updateInstallAppUi(){
   }else{
     hint.textContent = 'No menu do navegador, escolha “Instalar aplicação” ou “Adicionar ao ecrã principal”.';
   }
+  updateEntryGateUi();
 }
 
 async function requestInstallApp(){
@@ -4979,8 +5027,10 @@ async function requestInstallApp(){
     return;
   }
   if(isAppleMobileDevice()){
+    setEntryInstallHint('No Safari, use Adicionar ao ecrã principal. Pode também tocar em Abrir aplicação.');
     toast('No Safari, toque em Partilhar e escolha “Adicionar ao ecrã principal”.');
   }else{
+    setEntryInstallHint('A instalação directa ainda não está disponível neste navegador. Pode tocar em Abrir aplicação.');
     toast('Abra o menu do navegador e escolha “Instalar aplicação” ou “Adicionar ao ecrã principal”.');
   }
 }
@@ -4993,8 +5043,10 @@ window.addEventListener('beforeinstallprompt', event => {
 
 window.addEventListener('appinstalled', () => {
   deferredInstallPrompt = null;
+  sessionStorage.setItem(ENTRY_GATE_SESSION_KEY, '1');
   updateInstallAppUi();
   toast('Aplicação instalada no telefone.');
+  updateEntryGateUi();
 });
 
 window.matchMedia('(display-mode: standalone)').addEventListener?.('change', updateInstallAppUi);
@@ -8409,7 +8461,10 @@ if(workChurchSelect && workChurchSelect.dataset.bound!=='1'){
 }
 $('#importMembersBtn')?.addEventListener('click',importMembersCsv);
 $('#installAppBtn')?.addEventListener('click', requestInstallApp);
+$('#entryInstallBtn')?.addEventListener('click', requestInstallApp);
+$('#entryOpenBtn')?.addEventListener('click', openEntryApp);
 updateInstallAppUi();
+updateEntryGateUi();
 
 $('#resetBtn').addEventListener('click', resetForm);
 $('#refreshStatsBtn').addEventListener('click', loadStats);

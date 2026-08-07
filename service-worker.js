@@ -1,5 +1,5 @@
-// Gestão Digital da Igreja v54.5.4
-// Service worker mínimo: permite a instalação sem servir ficheiros desactualizados.
+// Gestão Digital da Igreja v54.8.1
+// Service worker mínimo: permite instalação PWA e evita servir versões antigas.
 self.addEventListener('install', event => {
   self.skipWaiting();
 });
@@ -12,4 +12,4 @@ self.addEventListener('activate', event => {
   })());
 });
 
-// Não intercepta pedidos. O frontend e o Apps Script continuam sempre ligados à rede.
+// Não intercepta pedidos. A aplicação continua a usar sempre a rede/Vercel.
