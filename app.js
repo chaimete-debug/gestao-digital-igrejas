@@ -4949,6 +4949,18 @@ function userCanApprove(){
   return arr(u.approveAreas).length > 0 || String(u.role || '').toUpperCase().includes('ADMIN');
 }
 
+// v54.7.4 — numa igreja local, a área de aprovações só é necessária ao Tesoureiro,
+// porque os lançamentos financeiros feitos por Líderes ficam PENDENTES para decisão.
+// Secretário, Pastor e perfis de leitura não precisam deste menu no fluxo local.
+// Em âmbito distrital/administrativo, mantém-se a área de Aprovações conforme permissões.
+function shouldShowApprovalsNav(){
+  const u = currentUser();
+  if(!userCanApprove()) return false;
+  if(isDistrictUserClient(u)) return true;
+  const role = String(u.role || u.perfil || '').trim().toUpperCase();
+  return role === 'TESOUREIRO' || role.includes('ADMIN');
+}
+
 function userCanSubmitModule(module){
   const area = MODULE_AREA[module];
   return !!area && userCanSubmitArea(area);
@@ -4997,7 +5009,7 @@ function applyPermissionsToUi(){
       visible = visible && district;
     }
     if(view === 'formView') visible = arr(u.submitAreas).length > 0;
-    if(view === 'approvalView') visible = userCanApprove();
+    if(view === 'approvalView') visible = shouldShowApprovalsNav();
     if(view === 'helpView') visible = true;
     btn.classList.toggle('hidden', !visible);
   });
@@ -6307,7 +6319,7 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.7.3'
+    clientVersion:'54.7.4'
   };
 }
 
@@ -6318,7 +6330,7 @@ async function submitForm(e){
 
   if(!ensureWorkChurchForSubmission()) return;
 
-  // v54.7.3: mantém resposta visual imediata e acrescenta timeout para evitar submissões presas indefinidamente.
+  // v54.7.4: mantém resposta visual imediata e acrescenta timeout para evitar submissões presas indefinidamente.
   // Nas versões anteriores era seleccionado o primeiro botão submit de toda a página
   // (normalmente o botão Entrar do login), deixando o botão visível aparentemente inerte.
   if(btn){ btn.disabled=true; btn.textContent='A validar...'; }
@@ -7870,4 +7882,4 @@ setupSandboxBanner();
 
 // v54.7.2 — corrige o botão Submeter do formulário dinâmico: o estado visual e o bloqueio passam a actuar sobre o botão do próprio formulário, com deslocação automática para o primeiro erro de validação.
 
-// v54.7.3 — corrige bloqueio do envio: timeout no frontend e compatibilidade com backend sem lock aninhado.
+// v54.7.4 — corrige bloqueio do envio: timeout no frontend e compatibilidade com backend sem lock aninhado.
