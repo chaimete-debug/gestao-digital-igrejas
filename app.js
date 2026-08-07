@@ -8511,5 +8511,5 @@ setupSandboxBanner();
 
 // v54.8.0 — corrige bloqueio do envio: timeout no frontend e compatibilidade com backend sem lock aninhado.
 
-// v54.8.3 — alteração de apresentação: o selector "O que deseja preencher?" fica no topo
+// v54.8.4 — alteração de apresentação: o selector "O que deseja preencher?" fica no topo
 // e cada módulo é apresentado abaixo em largura total. A lógica de submissão não foi alterada.

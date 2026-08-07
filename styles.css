@@ -563,3 +563,57 @@ body.sandbox-mode .primary-btn:hover{background:#115e59;}
     grid-template-columns:1fr;
   }
 }
+
+/* v54.8.4 — correcção estrutural de todos os grupos aninhados do formulário.
+   Qualquer grupo XLSForm, independentemente da profundidade, ocupa sempre toda
+   a largura da grelha que o contém. Os campos do grupo continuam em duas
+   colunas no computador e uma coluna em ecrãs estreitos. */
+#dynamicForm .section.full{
+  grid-column:1 / -1;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+}
+#dynamicForm .section,
+#dynamicForm .repeater,
+#dynamicForm .note,
+#dynamicForm .field{
+  min-width:0;
+  max-width:100%;
+}
+#dynamicForm .section > .field-grid,
+#dynamicForm .repeat-item > .field-grid{
+  width:100%;
+  min-width:0;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+#dynamicForm .section > .field-grid > *,
+#dynamicForm .repeat-item > .field-grid > *{
+  min-width:0;
+  max-width:100%;
+}
+#dynamicForm input,
+#dynamicForm select,
+#dynamicForm textarea{
+  min-width:0;
+  max-width:100%;
+}
+#dynamicForm .field label,
+#dynamicForm .field small,
+#dynamicForm .section h3,
+#dynamicForm .section .hint,
+#dynamicForm .note{
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+/* Grupos internos ficam empilhados, evitando a redução progressiva de largura
+   que ocorria em Cadastro de membro efectivo > Dados de membro > Perfil/Contactos. */
+#dynamicForm .section .section.full{
+  grid-column:1 / -1;
+}
+@media(max-width:760px){
+  #dynamicForm .section > .field-grid,
+  #dynamicForm .repeat-item > .field-grid{
+    grid-template-columns:1fr;
+  }
+}
