@@ -527,3 +527,39 @@ body.sandbox-mode .primary-btn:hover{background:#115e59;}
 .entry-gate-card{width:min(560px,100%);background:#fff;border:1px solid #dbe7e4;border-radius:28px;padding:28px;box-shadow:0 24px 70px rgba(15,23,42,.16)}
 .entry-gate-brand{display:flex;align-items:center;gap:16px}.entry-gate-brand img{width:76px;height:76px;object-fit:contain;border-radius:20px;border:1px solid #dbe7e4;background:#fff;padding:8px}.entry-gate-kicker{display:block;color:#0f766e;font-size:12px;font-weight:900;letter-spacing:.12em}.entry-gate h1{margin:6px 0 6px;color:#0f172a;font-size:clamp(26px,6vw,38px);line-height:1.08}.entry-gate p{margin:0;color:#64748b;line-height:1.5}.entry-gate-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}.entry-install-btn,.entry-open-btn{min-height:54px;border-radius:16px;padding:13px 16px;font:inherit;font-weight:900;cursor:pointer}.entry-install-btn{border:0;background:#0f766e;color:#fff}.entry-install-btn:hover{background:#115e59}.entry-install-btn:disabled{opacity:.62;cursor:default}.entry-open-btn{border:1px solid #cbd5e1;background:#fff;color:#0f172a}.entry-open-btn:hover{background:#f8fafc}.entry-install-hint{margin-top:14px!important;font-size:13px;text-align:center}.entry-gate-active{overflow:hidden}
 @media(max-width:560px){.entry-gate{padding:14px}.entry-gate-card{padding:22px 18px;border-radius:24px}.entry-gate-brand{align-items:flex-start}.entry-gate-brand img{width:64px;height:64px;border-radius:18px}.entry-gate-actions{grid-template-columns:1fr}.entry-install-btn,.entry-open-btn{width:100%}}
+
+/* v54.8.3 — formulário dinâmico em fluxo vertical.
+   O selector do módulo fica no topo e o conteúdo seleccionado usa toda a largura. */
+#dynamicForm > .field-grid{
+  grid-template-columns:1fr;
+  gap:18px;
+}
+#dynamicForm > .field-grid > .field[data-field="menu_preencher"]{
+  grid-column:1/-1;
+  width:100%;
+  max-width:760px;
+}
+#dynamicForm > .field-grid > .section.full,
+#dynamicForm > .field-grid > .repeater,
+#dynamicForm > .field-grid > .note{
+  grid-column:1/-1;
+  width:100%;
+  min-width:0;
+}
+/* As perguntas dentro de cada módulo continuam em duas colunas no computador. */
+#dynamicForm > .field-grid > .section.full > .field-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  width:100%;
+  min-width:0;
+}
+#dynamicForm > .field-grid > .section.full > .field-grid > *{
+  min-width:0;
+}
+@media(max-width:760px){
+  #dynamicForm > .field-grid > .field[data-field="menu_preencher"]{
+    max-width:none;
+  }
+  #dynamicForm > .field-grid > .section.full > .field-grid{
+    grid-template-columns:1fr;
+  }
+}
