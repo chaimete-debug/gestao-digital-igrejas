@@ -2956,6 +2956,336 @@ const XLSFORM_FIELDS = [
     "parameters": "",
     "choice_filter": "",
     "default": ""
+  },
+  {
+    "type": "begin_group",
+    "name": "grp_pequenos_grupos",
+    "label": "Relatório de pequenos grupos",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "field-list",
+    "relevant": "${menu_preencher} = 'pequenos_grupos'",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "note",
+    "name": "pg_intro",
+    "label": "PEQUENOS GRUPOS",
+    "hint": "Registe os dados do encontro do pequeno grupo.",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "text",
+    "name": "pg_grupo",
+    "label": "Grupo",
+    "hint": "Indique o nome ou número do pequeno grupo.",
+    "required": "true",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "text",
+    "name": "pg_local",
+    "label": "Local do encontro do grupo",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "date",
+    "name": "pg_data",
+    "label": "Data do encontro",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "time",
+    "name": "pg_hora",
+    "label": "Hora do encontro",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "integer",
+    "name": "pg_membros_presentes",
+    "label": "Membros do grupo presentes",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": ". >= 0",
+    "constraint_message": "Introduza um número igual ou superior a 0.",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one sim_nao",
+    "name": "pg_novos_participantes",
+    "label": "Tem novos participantes no grupo hoje?",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "begin_repeat",
+    "name": "pg_actualizacao_membros",
+    "label": "Actualização da lista dos membros do grupo",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "${pg_novos_participantes} = 'sim'",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "text",
+    "name": "pg_participante_nome",
+    "label": "Nome",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one categoria_participante_pg",
+    "name": "pg_participante_categoria",
+    "label": "Categoria",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "end_repeat",
+    "name": "",
+    "label": "",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "select_one sim_nao",
+    "name": "pg_fizeram_ofertas",
+    "label": "Fizeram ofertas hoje?",
+    "hint": "",
+    "required": "true",
+    "calculation": "",
+    "appearance": "minimal",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "begin_group",
+    "name": "pg_ofertas_grupo",
+    "label": "Ofertas e contribuições",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "field-list",
+    "relevant": "${pg_fizeram_ofertas} = 'sim'",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "decimal",
+    "name": "pg_ofertas",
+    "label": "Ofertas",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": ". >= 0",
+    "constraint_message": "Introduza um valor igual ou superior a 0.",
+    "parameters": "",
+    "choice_filter": "",
+    "default": "0"
+  },
+  {
+    "type": "decimal",
+    "name": "pg_construcao",
+    "label": "Contribuição para construção da igreja",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": ". >= 0",
+    "constraint_message": "Introduza um valor igual ou superior a 0.",
+    "parameters": "",
+    "choice_filter": "",
+    "default": "0"
+  },
+  {
+    "type": "decimal",
+    "name": "pg_outras_ofertas",
+    "label": "Outras ofertas ou contribuições",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": ". >= 0",
+    "constraint_message": "Introduza um valor igual ou superior a 0.",
+    "parameters": "",
+    "choice_filter": "",
+    "default": "0"
+  },
+  {
+    "type": "calculate",
+    "name": "pg_total_ofertas",
+    "label": "",
+    "hint": "",
+    "required": "false",
+    "calculation": "${pg_ofertas} + ${pg_construcao} + ${pg_outras_ofertas}",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "note",
+    "name": "pg_total_note",
+    "label": "Total: ${pg_total_ofertas} MT",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "end_group",
+    "name": "",
+    "label": "",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "text",
+    "name": "pg_observacoes",
+    "label": "Comentários/Observações",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "long-text",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
+  },
+  {
+    "type": "end_group",
+    "name": "",
+    "label": "",
+    "hint": "",
+    "required": "false",
+    "calculation": "",
+    "appearance": "",
+    "relevant": "",
+    "constraint": "",
+    "constraint_message": "",
+    "parameters": "",
+    "choice_filter": "",
+    "default": ""
   }
 ];
 
@@ -2984,7 +3314,19 @@ const CHOICES = {
       "label": "Registo financeiro",
       "order": "4",
       "tipo": ""
+    },
+    {
+      "name": "pequenos_grupos",
+      "label": "Relatório de pequenos grupos",
+      "order": "5",
+      "tipo": ""
     }
+  ],
+  "categoria_participante_pg": [
+    {"name":"membro_nao_registado","label":"Membro não registado","order":"1","tipo":""},
+    {"name":"novo_membro","label":"Novo membro","order":"2","tipo":""},
+    {"name":"visitante","label":"Visitante","order":"3","tipo":""},
+    {"name":"crianca","label":"Criança","order":"4","tipo":""}
   ],
   "culto_evento": [
     {
@@ -3978,7 +4320,7 @@ function addSandboxSubmission(payload){
 
 function sandboxStats(){
   const rows = sandboxRecent();
-  const stats = { plano_cultos_escalas: 2, relatorio_cultos: 2, visitantes: 3, registo_financeiro: 3 };
+  const stats = { plano_cultos_escalas: 2, relatorio_cultos: 2, visitantes: 3, registo_financeiro: 3, pequenos_grupos: 2 };
   rows.forEach(r => { if(stats[r.module] !== undefined) stats[r.module] += 1; });
   return { stats, recent: rows };
 }
@@ -4030,6 +4372,10 @@ function sandboxAppData(){
       {data:'2026-05-03', nome:'Ana Demo', sexo:'F', faixa:'18–35', bairro:'Matola', primeiraVez:'sim', comoConheceu:'Convite de membro', contacto:'sim', telefone:'84xxxxxxx', pedidoOracao:'Família'},
       {data:'2026-05-10', nome:'Carlos Demo', sexo:'M', faixa:'36–55', bairro:'Boquisso', primeiraVez:'sim', comoConheceu:'Redes sociais', contacto:'nao', telefone:'85xxxxxxx'},
       {data:'2026-05-17', nome:'Marta Demo', sexo:'F', faixa:'18–35', bairro:'Infulene', primeiraVez:'nao', comoConheceu:'Família', contacto:'sim', telefone:'86xxxxxxx'}
+    ],
+    pequenosGrupos: [
+      {data:'2026-05-06',hora:'18:00',grupo:'Grupo Esperança',local:'Casa da Família M.',membrosPresentes:12,novosParticipantes:2,ofertas:850,observacoes:'Encontro realizado normalmente.'},
+      {data:'2026-05-13',hora:'18:00',grupo:'Grupo Esperança',local:'Casa da Família M.',membrosPresentes:15,novosParticipantes:1,ofertas:1200,observacoes:''}
     ],
     dizimos: [
       {data:'2026-05-03', nome:'Membro Demo 1', modo:'Membro registado', valorOrig:'2500', moeda:'MZN', valorMzn:2500, metodo:'M-Pesa', recibo:'REC-001'},
@@ -4208,6 +4554,7 @@ function setCurrentUserCard(user){
 const MODULE_AREA = {
   plano_cultos_escalas: 'PLANO',
   relatorio_cultos: 'CULTOS',
+  pequenos_grupos: 'CULTOS',
   registo_financeiro: 'FINANCAS',
   visitantes: 'MEMBROS'
 };
@@ -5310,6 +5657,12 @@ function calculateMainField(field){
       const o=moneyValue(getVal('rel_ofertas_valor'));
       return moneyValue((Number.isFinite(d)?d:0)+(Number.isFinite(o)?o:0));
     }
+    case 'pg_total_ofertas': {
+      const ofertas=moneyValue(getVal('pg_ofertas'));
+      const construcao=moneyValue(getVal('pg_construcao'));
+      const outras=moneyValue(getVal('pg_outras_ofertas'));
+      return moneyValue((Number.isFinite(ofertas)?ofertas:0)+(Number.isFinite(construcao)?construcao:0)+(Number.isFinite(outras)?outras:0));
+    }
     default: {
       const direct=c.match(/^\$\{([^}]+)\}$/);
       return direct ? getVal(direct[1]) : getVal(name);
@@ -5770,7 +6123,8 @@ function constraintPassed(field, value, context={}){
 
   const nonNegative=new Set([
     'valor','rel_participantes_total','rel_visitantes','rel_decisoes','rel_baptismos',
-    'rel_dizimos_valor','rel_dizimistas_qtd','rel_ofertas_valor'
+    'rel_dizimos_valor','rel_dizimistas_qtd','rel_ofertas_valor',
+    'pg_membros_presentes','pg_ofertas','pg_construcao','pg_outras_ofertas'
   ]);
   if(nonNegative.has(name)){
     const n=numberValue(value);
@@ -5819,6 +6173,24 @@ function validateCrossFieldRules(){
     if(!Number.isFinite(start) || !Number.isFinite(end) || end<=start){
       markError(visibleInputByField('rel_hora_fim'),'A hora de término deve ser posterior à hora de início.');
       ok=false;
+    }
+  }
+
+  if(module==='pequenos_grupos'){
+    if(getVal('pg_novos_participantes')==='sim'){
+      const rows=(state.repeats.pg_actualizacao_membros||[]).filter(Boolean);
+      const valid=rows.filter(r=>String(r.pg_participante_nome||'').trim() && String(r.pg_participante_categoria||'').trim());
+      if(!rows.length || valid.length!==rows.length){
+        markError(document.querySelector('[data-repeat="pg_actualizacao_membros"]'),'Indique o nome e a categoria de cada novo participante.');
+        ok=false;
+      }
+    }
+    if(getVal('pg_fizeram_ofertas')==='sim'){
+      const total=moneyValue(getVal('pg_total_ofertas'));
+      if(!Number.isFinite(total) || total<0){
+        markError(visibleInputByField('pg_ofertas'),'Introduza valores válidos para as ofertas e contribuições.');
+        ok=false;
+      }
     }
   }
 
@@ -5932,7 +6304,7 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.6.2'
+    clientVersion:'54.7.0'
   };
 }
 
@@ -5969,7 +6341,7 @@ function applyUrlModuleParam(){
   const requested = (params.get('modulo') || params.get('module') || '').trim();
   if(!requested) return;
 
-  const allowed = ['plano_cultos_escalas', 'relatorio_cultos', 'visitantes', 'registo_financeiro'];
+  const allowed = ['plano_cultos_escalas', 'relatorio_cultos', 'visitantes', 'registo_financeiro', 'pequenos_grupos'];
   if(!allowed.includes(requested)){
     console.warn('Módulo indicado no link não existe:', requested);
     return;
@@ -6068,7 +6440,7 @@ async function loadStats(){
   grid.innerHTML='<div class="kpi"><span>A carregar...</span></div>';
   if(SANDBOX_MODE){
     const out = sandboxStats();
-    const modules=['plano_cultos_escalas','relatorio_cultos','visitantes','registo_financeiro'];
+    const modules=['plano_cultos_escalas','relatorio_cultos','visitantes','registo_financeiro','pequenos_grupos'];
     grid.innerHTML=modules.map(m=>`<div class="kpi"><b>${out.stats[m]||0}</b><span>${optionLabel('menu_preencher',m)}</span></div>`).join('');
     renderRecent(out.recent||[],out.scope||null);
     return;
@@ -6084,7 +6456,7 @@ async function loadStats(){
     if(!out.ok) throw new Error(out.message || 'Não foi possível carregar o painel.');
     state.stats=out;
     const stats=out.stats || {};
-    const modules=['plano_cultos_escalas','relatorio_cultos','visitantes','registo_financeiro'];
+    const modules=['plano_cultos_escalas','relatorio_cultos','visitantes','registo_financeiro','pequenos_grupos'];
     grid.innerHTML=modules.map(m=>`<div class="kpi"><b>${stats[m]||0}</b><span>${optionLabel('menu_preencher',m)}</span></div>`).join('');
     renderRecent(out.recent||[],out.scope||null);
   }catch(e){
@@ -6307,6 +6679,7 @@ async function loadFinancialReport(){
 const APPROVAL_MODULES = {
   plano_cultos_escalas:'Plano de cultos e escalas',
   relatorio_cultos:'Relatório de cultos',
+  pequenos_grupos:'Pequenos grupos',
   registo_financeiro:'Registo financeiro',
   visitantes:'Visitantes e membros'
 };
@@ -6488,6 +6861,7 @@ async function loadAppData(){
     renderOverview(out);
     renderEscalas(out.escalas || []);
     renderCultos(out.cultos || []);
+    renderPequenosGrupos(out.pequenosGrupos || []);
     renderVisitantes(out.visitantes || []);
     renderDizimos(out.dizimos || []);
     return;
@@ -6504,6 +6878,7 @@ async function loadAppData(){
     renderOverview(out);
     renderEscalas(out.escalas || []);
     renderCultos(out.cultos || []);
+    renderPequenosGrupos(out.pequenosGrupos || []);
     renderVisitantes(out.visitantes || []);
     renderDizimos(out.dizimos || []);
   }catch(e){
@@ -6557,6 +6932,23 @@ function renderCultos(rows){
   const list=$('#cultosList'); if(!list) return;
   list.innerHTML=filtered.map(r=>`<article class="legacy-card culto-card"><div class="card-line"><h3>${r.tipo||'Culto'}</h3><span class="pill">${numberValue(r.participantes)} PAX</span></div><p>📅 ${r.data||''} ⏰ ${r.hora||''}</p><p><strong>Local:</strong> ${r.local||''}</p><div class="legacy-mini-grid"><span>Visitantes<br><b>${numberValue(r.visitantes)}</b></span><span>Baptismos<br><b>${numberValue(r.baptismos)}</b></span><span>Decisões<br><b>${numberValue(r.decisoes)}</b></span><span>Sta. Ceia<br><b>${r.santaCeia||'—'}</b></span></div><div class="legacy-mini-grid money-row"><span>Dízimos<br><b>${money(r.dizimos)}</b></span><span>Ofertas<br><b>${money(r.ofertas)}</b></span><span>Total<br><b>${money(numberValue(r.dizimos)+numberValue(r.ofertas))}</b></span></div></article>`).join('') || '<div class="legacy-empty">Sem relatórios de cultos para o período</div>';
 }
+function renderPequenosGrupos(rows){
+  const mes=$('#pequenosGruposMes')?.value||'';
+  if($('#pequenosGruposMes') && !$('#pequenosGruposMes').dataset.ready){
+    $('#pequenosGruposMes').addEventListener('change',()=>renderPequenosGrupos(state.appData?.pequenosGrupos||[]));
+    $('#pequenosGruposMes').dataset.ready='1';
+  }
+  const filtered=(rows||[]).filter(r=>monthMatches(r.data,mes));
+  renderKpis('pequenosGruposKpis', [
+    {label:'Encontros', value:filtered.length},
+    {label:'Membros presentes', value:filtered.reduce((s,r)=>s+numberValue(r.membrosPresentes),0)},
+    {label:'Novos participantes', value:filtered.reduce((s,r)=>s+numberValue(r.novosParticipantes),0)},
+    {label:'Ofertas e contribuições', value:money(filtered.reduce((s,r)=>s+numberValue(r.ofertas),0))}
+  ]);
+  const tbody=$('#pequenosGruposTable tbody'); if(!tbody) return;
+  tbody.innerHTML=filtered.map(r=>`<tr><td>${cleanHtml(r.data||'')}</td><td>${cleanHtml(r.hora||'')}</td><td><strong>${cleanHtml(r.grupo||'')}</strong></td><td>${cleanHtml(r.local||'')}</td><td>${numberValue(r.membrosPresentes)}</td><td>${numberValue(r.novosParticipantes)}</td><td>${money(r.ofertas)}</td><td>${cleanHtml(r.observacoes||'')}</td></tr>`).join('') || '<tr><td colspan="8">Sem encontros registados para o período</td></tr>';
+}
+
 function renderVisitantes(rows){
   const mes=$('#visitantesMes')?.value||'', prim=$('#visitantesPrimeira')?.value||'';
   if($('#visitantesMes') && !$('#visitantesMes').dataset.ready){ $('#visitantesMes').addEventListener('change',()=>renderVisitantes(state.appData?.visitantes||[])); $('#visitantesPrimeira')?.addEventListener('change',()=>renderVisitantes(state.appData?.visitantes||[])); $('#visitantesMes').dataset.ready='1'; }
@@ -7427,4 +7819,4 @@ setupSandboxBanner();
 
 // v54.5.4 — elimina igrejas duplicadas na comparação e no selector de tendência, consolidando registos históricos pelo nome.
 
-// v54.6.2 — separa o Avante Evangelho em visualização geral pública e área autenticada de lançamento; o formulário só é exibido a perfis com permissão de gestão.
+// v54.7.0 — integra o módulo de Pequenos Grupos; mantém os dois modos do Avante Evangelho em visualização geral pública e área autenticada de lançamento; o formulário só é exibido a perfis com permissão de gestão.
