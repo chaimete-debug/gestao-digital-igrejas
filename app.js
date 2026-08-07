@@ -6307,23 +6307,43 @@ function collectPayload(){
     data:payloadData,
     repeats:compactRepeatsForPayload(JSON.parse(JSON.stringify(state.repeats||{}))),
     userAgent:navigator.userAgent,
-    clientVersion:'54.7.1'
+    clientVersion:'54.7.2'
   };
 }
 
 async function submitForm(e){
   e.preventDefault();
+  const form = e.currentTarget || $('#dynamicForm');
+  const btn = form?.querySelector('button[type="submit"]');
+
   if(!ensureWorkChurchForSubmission()) return;
-  if(!validate()) return toast('Corrija os campos assinalados antes de submeter.', 'error');
+
+  // v54.7.2: dá resposta visual imediata no botão que o utilizador acabou de clicar.
+  // Nas versões anteriores era seleccionado o primeiro botão submit de toda a página
+  // (normalmente o botão Entrar do login), deixando o botão visível aparentemente inerte.
+  if(btn){ btn.disabled=true; btn.textContent='A validar...'; }
+
+  if(!validate()){
+    if(btn){ btn.disabled=false; btn.textContent='Submeter'; }
+    const firstError = form?.querySelector('.error, .error-text');
+    firstError?.scrollIntoView({behavior:'smooth', block:'center'});
+    return toast('Corrija os campos assinalados antes de submeter.', 'error');
+  }
+
   const url=window.APP_CONFIG.APPS_SCRIPT_URL;
   if(!url){
+    if(btn){ btn.disabled=false; btn.textContent='Submeter'; }
     setLoginMessage('Erro de configuração: a ligação ao backend não está definida.');
     return toast('Configure primeiro a URL do backend em config.js.', 'error');
   }
-  const btn=$('button[type="submit"]'); btn.disabled=true; btn.textContent='A submeter...';
+
+  if(btn) btn.textContent='A submeter...';
   try{
     const authToken = getAuthToken();
-    if(!authToken){ showLogin('Sessão expirada. Faça login novamente.'); return; }
+    if(!authToken){
+      showLogin('Sessão expirada. Faça login novamente.');
+      return;
+    }
     const payload = collectPayload();
     payload.authToken = authToken;
     if(SANDBOX_MODE){
@@ -6333,10 +6353,18 @@ async function submitForm(e){
       return;
     }
     const res=await fetch(url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(payload)});
-    const out=await res.json(); if(!out.ok) throw new Error(out.message || 'Erro desconhecido');
-    toast('Registo submetido com sucesso.'); resetForm(); loadStats();
-  }catch(err){ console.error(err); toast('Falha ao submeter: '+err.message, 'error'); }
-  finally{ btn.disabled=false; btn.textContent='Submeter'; }
+    const out=await res.json();
+    if(!out.ok) throw new Error(out.message || 'Erro desconhecido');
+    toast('Registo submetido com sucesso.');
+    resetForm();
+    loadStats();
+    loadAppData();
+  }catch(err){
+    console.error(err);
+    toast('Falha ao submeter: '+err.message, 'error');
+  }finally{
+    if(btn && btn.isConnected){ btn.disabled=false; btn.textContent='Submeter'; }
+  }
 }
 function resetForm(){ state.values={submission_uuid:uuid()}; state.repeats={}; renderForm(); }
 function applyUrlModuleParam(){
@@ -7822,4 +7850,4 @@ setupSandboxBanner();
 
 // v54.5.4 — elimina igrejas duplicadas na comparação e no selector de tendência, consolidando registos históricos pelo nome.
 
-// v54.7.1 — corrige a recolha dos campos das linhas repetidas (Nome + Categoria) no módulo de Pequenos Grupos; mantém os dois modos do Avante Evangelho em visualização geral pública e área autenticada de lançamento; o formulário só é exibido a perfis com permissão de gestão.
+// v54.7.2 — corrige o botão Submeter do formulário dinâmico: o estado visual e o bloqueio passam a actuar sobre o botão do próprio formulário, com deslocação automática para o primeiro erro de validação.
